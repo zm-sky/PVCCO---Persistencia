@@ -197,4 +197,9 @@ public class Persistencia implements IntPersistencia{
         return tallaApartadoJpa.findTallaApartadoEntities();
     }
 
+    @Override
+    public TallaApartado obten(TallaApartado talla) throws Exception {
+        return tallaApartadoJpa.findTallaApartado(talla.getIdTallaApartado());
+    }
+
 }
