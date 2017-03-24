@@ -353,9 +353,27 @@ public class TallaJpaController implements Serializable {
         EntityManager em = getEntityManager();
         TypedQuery<Talla> query = em.createNamedQuery("Talla.findByTalla", Talla.class);
         query.setParameter("talla", talla.getTalla());
-        query.setParameter("idModelo",talla.getIdModelo());
+        query.setParameter("idModelo", talla.getIdModelo());
         try {
             return query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Este metodo regresa las tallas de un modelo en especifico.
+     * @param modelo
+     * @return tallas de modelo
+     */
+    public List<Talla> obtenTallasDeModelo(Modelo modelo) {
+        try {
+            List<Talla> listaTallas = new ArrayList<>();
+            EntityManager em = getEntityManager();
+            TypedQuery<Talla> query = em.createNamedQuery("Talla.findByModelo", Talla.class);
+            query.setParameter("idModelo", modelo);
+            listaTallas = query.getResultList();
+            return listaTallas;
         } catch (Exception e) {
             return null;
         }

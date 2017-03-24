@@ -207,4 +207,9 @@ public class Persistencia implements IntPersistencia{
         return modeloJpa.getModeloPorNombre(modelo);
     }
 
+    @Override
+    public List<Talla> obtenTallasDeModelo(Modelo modelo) throws Exception {
+        return tallaJpa.obtenTallasDeModelo(modelo);
+    }
+
 }
