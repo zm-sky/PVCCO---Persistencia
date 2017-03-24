@@ -1,4 +1,3 @@
-
 package controladores;
 
 import controladores.exceptions.IllegalOrphanException;
@@ -15,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 import objetosNegocio.Modelo;
 
 /**
@@ -200,6 +200,24 @@ public class ModeloJpaController implements Serializable {
             return ((Long) q.getSingleResult()).intValue();
         } finally {
             em.close();
+        }
+    }
+
+    /**
+     * Regresa un modelo el cual el nombre sera igual al nombre del modelo del
+     * paramentro.
+     *
+     * @param modelo
+     * @return
+     */
+    public Modelo getModeloPorNombre(Modelo modelo) {
+        EntityManager em = getEntityManager();
+        TypedQuery<Modelo> query = em.createNamedQuery("Modelo.findByNombre", Modelo.class);
+        query.setParameter("nombre", modelo.getNombre());
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            return null;
         }
     }
 

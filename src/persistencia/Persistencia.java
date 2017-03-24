@@ -10,13 +10,8 @@ import controladores.TallaJpaController;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import objetosNegocio.Apartado;
-import objetosNegocio.BajaDeInventario;
-import objetosNegocio.Modelo;
-import objetosNegocio.MovimientoEnApartado;
-import objetosNegocio.Talla;
-import objetosNegocio.TallaApartado;
 import pvcco.interfaces.IntPersistencia;
+import objetosNegocio.*;
 
 /**
  *
@@ -200,6 +195,16 @@ public class Persistencia implements IntPersistencia{
     @Override
     public TallaApartado obten(TallaApartado talla) throws Exception {
         return tallaApartadoJpa.findTallaApartado(talla.getIdTallaApartado());
+    }
+
+    @Override
+    public Talla obtenTallaPorTalla(Talla talla) throws Exception {
+        return tallaJpa.obtenTallaPorTalla(talla);
+    }
+
+    @Override
+    public Modelo obtenModeloPorNombre(Modelo modelo) throws Exception {
+        return modeloJpa.getModeloPorNombre(modelo);
     }
 
 }

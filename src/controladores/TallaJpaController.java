@@ -1,4 +1,3 @@
-
 package controladores;
 
 import controladores.exceptions.IllegalOrphanException;
@@ -16,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 import objetosNegocio.Talla;
 import objetosNegocio.VentaTalla;
 import objetosNegocio.TallaApartado;
@@ -337,6 +337,27 @@ public class TallaJpaController implements Serializable {
             return ((Long) q.getSingleResult()).intValue();
         } finally {
             em.close();
+        }
+    }
+
+    /**
+     * Este metodo recibe una talla, toma el atributo talla del objeto y lo
+     * compara contra las tallas de la base de datos. Si una talla es igual,
+     * toma la talla de la base de datos y la regresa.
+     *
+     * @param talla
+     * @param modelo
+     * @return Talla de Base de datos
+     */
+    public Talla obtenTallaPorTalla(Talla talla) {
+        EntityManager em = getEntityManager();
+        TypedQuery<Talla> query = em.createNamedQuery("Talla.findByTalla", Talla.class);
+        query.setParameter("talla", talla.getTalla());
+        query.setParameter("idModelo",talla.getIdModelo());
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            return null;
         }
     }
 
