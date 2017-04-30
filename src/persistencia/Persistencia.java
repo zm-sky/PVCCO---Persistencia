@@ -8,6 +8,8 @@ import controladores.MovimientoEnApartadoJpaController;
 import controladores.MovimientoEnVentaJpaController;
 import controladores.TallaApartadoJpaController;
 import controladores.TallaJpaController;
+import controladores.TipoUsuarioJpaController;
+import controladores.UsuarioJpaController;
 import controladores.VentaJpaController;
 import controladores.VentaTallaJpaController;
 import objetosNegocio.Venta;
@@ -21,6 +23,7 @@ import objetosNegocio.BajaDeInventario;
 import objetosNegocio.MovimientoEnApartado;
 import objetosNegocio.MovimientoEnVenta;
 import objetosNegocio.TallaApartado;
+import objetosNegocio.Usuario;
 import objetosNegocio.VentaTalla;
 import pvcco.interfaces.IntPersistencia;
 
@@ -37,8 +40,8 @@ public class Persistencia implements IntPersistencia{
     private TallaJpaController tallaJpa;
     private TallaApartadoJpaController tallaApartadoJpa;
     private BajaDeInventarioJpaController bajaDeInventarioJpaController;
-    //private TipoUsuarioJpaController tipousuarioJpaController;
-    //private UsuarioJpaController usuarioJpaController;
+    private TipoUsuarioJpaController tipousuarioJpaController;
+    private UsuarioJpaController usuarioJpaController;
     private VentaJpaController ventaJpaController;
     private MovimientoEnVentaJpaController movimientoenventaJpaController;
     private VentaTallaJpaController ventatallaJpaController;
@@ -53,7 +56,7 @@ public class Persistencia implements IntPersistencia{
         tallaApartadoJpa = new TallaApartadoJpaController(emf);
         bajaDeInventarioJpaController = new BajaDeInventarioJpaController(emf);
         //tipousuarioJpaController = new TipoUsuarioJpaController(emf);
-        //usuarioJpaController = new UsuarioJpaController(emf);
+        usuarioJpaController = new UsuarioJpaController(emf);
         ventaJpaController = new VentaJpaController(emf);
         movimientoenventaJpaController = new MovimientoEnVentaJpaController(emf);
         ventatallaJpaController = new VentaTallaJpaController(emf);
@@ -297,6 +300,26 @@ public class Persistencia implements IntPersistencia{
     @Override
     public List<VentaTalla> obtenVentaTallas() throws Exception {
         return ventatallaJpaController.findVentaTallaEntities();
+    }
+
+    @Override
+    public void agregar(Usuario usuario) throws Exception {
+        usuarioJpaController.create(usuario);
+    }
+
+    @Override
+    public void actualizar(Usuario usuario) throws Exception {
+        usuarioJpaController.edit(usuario);
+    }
+
+    @Override
+    public void eliminar(Usuario usuario) throws Exception {
+        usuarioJpaController.destroy(usuario.getIdUsuario());
+    }
+
+    @Override
+    public Usuario obten(Usuario usuario) throws Exception {
+        return usuarioJpaController.findUsuario(usuario.getIdUsuario());
     }
 
 }
