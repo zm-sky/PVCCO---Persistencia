@@ -35,24 +35,24 @@ public class TipoUsuarioJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(TipoUsuario tipousuario) throws PreexistingEntityException, Exception {
-        if (tipousuario.getUsuarioList() == null) {
-            tipousuario.setUsuarioList(new ArrayList<Usuario>());
+    public void create(TipoUsuario tipoUsuario) throws PreexistingEntityException, Exception {
+        if (tipoUsuario.getUsuarioList() == null) {
+            tipoUsuario.setUsuarioList(new ArrayList<Usuario>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             List<Usuario> attachedUsuarioList = new ArrayList<Usuario>();
-            for (Usuario usuarioListUsuarioToAttach : tipousuario.getUsuarioList()) {
+            for (Usuario usuarioListUsuarioToAttach : tipoUsuario.getUsuarioList()) {
                 usuarioListUsuarioToAttach = em.getReference(usuarioListUsuarioToAttach.getClass(), usuarioListUsuarioToAttach.getIdUsuario());
                 attachedUsuarioList.add(usuarioListUsuarioToAttach);
             }
-            tipousuario.setUsuarioList(attachedUsuarioList);
-            em.persist(tipousuario);
-            for (Usuario usuarioListUsuario : tipousuario.getUsuarioList()) {
+            tipoUsuario.setUsuarioList(attachedUsuarioList);
+            em.persist(tipoUsuario);
+            for (Usuario usuarioListUsuario : tipoUsuario.getUsuarioList()) {
                 TipoUsuario oldIdTipoUsuarioOfUsuarioListUsuario = usuarioListUsuario.getIdTipoUsuario();
-                usuarioListUsuario.setIdTipoUsuario(tipousuario);
+                usuarioListUsuario.setIdTipoUsuario(tipoUsuario);
                 usuarioListUsuario = em.merge(usuarioListUsuario);
                 if (oldIdTipoUsuarioOfUsuarioListUsuario != null) {
                     oldIdTipoUsuarioOfUsuarioListUsuario.getUsuarioList().remove(usuarioListUsuario);
@@ -61,8 +61,8 @@ public class TipoUsuarioJpaController implements Serializable {
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findTipousuario(tipousuario.getIdTipoUsuario()) != null) {
-                throw new PreexistingEntityException("Tipousuario " + tipousuario + " already exists.", ex);
+            if (findTipoUsuario(tipoUsuario.getIdTipoUsuario()) != null) {
+                throw new PreexistingEntityException("TipoUsuario " + tipoUsuario + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -72,14 +72,14 @@ public class TipoUsuarioJpaController implements Serializable {
         }
     }
 
-    public void edit(TipoUsuario tipousuario) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(TipoUsuario tipoUsuario) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TipoUsuario persistentTipousuario = em.find(TipoUsuario.class, tipousuario.getIdTipoUsuario());
-            List<Usuario> usuarioListOld = persistentTipousuario.getUsuarioList();
-            List<Usuario> usuarioListNew = tipousuario.getUsuarioList();
+            TipoUsuario persistentTipoUsuario = em.find(TipoUsuario.class, tipoUsuario.getIdTipoUsuario());
+            List<Usuario> usuarioListOld = persistentTipoUsuario.getUsuarioList();
+            List<Usuario> usuarioListNew = tipoUsuario.getUsuarioList();
             List<String> illegalOrphanMessages = null;
             for (Usuario usuarioListOldUsuario : usuarioListOld) {
                 if (!usuarioListNew.contains(usuarioListOldUsuario)) {
@@ -98,14 +98,14 @@ public class TipoUsuarioJpaController implements Serializable {
                 attachedUsuarioListNew.add(usuarioListNewUsuarioToAttach);
             }
             usuarioListNew = attachedUsuarioListNew;
-            tipousuario.setUsuarioList(usuarioListNew);
-            tipousuario = em.merge(tipousuario);
+            tipoUsuario.setUsuarioList(usuarioListNew);
+            tipoUsuario = em.merge(tipoUsuario);
             for (Usuario usuarioListNewUsuario : usuarioListNew) {
                 if (!usuarioListOld.contains(usuarioListNewUsuario)) {
                     TipoUsuario oldIdTipoUsuarioOfUsuarioListNewUsuario = usuarioListNewUsuario.getIdTipoUsuario();
-                    usuarioListNewUsuario.setIdTipoUsuario(tipousuario);
+                    usuarioListNewUsuario.setIdTipoUsuario(tipoUsuario);
                     usuarioListNewUsuario = em.merge(usuarioListNewUsuario);
-                    if (oldIdTipoUsuarioOfUsuarioListNewUsuario != null && !oldIdTipoUsuarioOfUsuarioListNewUsuario.equals(tipousuario)) {
+                    if (oldIdTipoUsuarioOfUsuarioListNewUsuario != null && !oldIdTipoUsuarioOfUsuarioListNewUsuario.equals(tipoUsuario)) {
                         oldIdTipoUsuarioOfUsuarioListNewUsuario.getUsuarioList().remove(usuarioListNewUsuario);
                         oldIdTipoUsuarioOfUsuarioListNewUsuario = em.merge(oldIdTipoUsuarioOfUsuarioListNewUsuario);
                     }
@@ -115,9 +115,9 @@ public class TipoUsuarioJpaController implements Serializable {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                String id = tipousuario.getIdTipoUsuario();
-                if (findTipousuario(id) == null) {
-                    throw new NonexistentEntityException("The tipousuario with id " + id + " no longer exists.");
+                String id = tipoUsuario.getIdTipoUsuario();
+                if (findTipoUsuario(id) == null) {
+                    throw new NonexistentEntityException("The tipoUsuario with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -133,25 +133,25 @@ public class TipoUsuarioJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TipoUsuario tipousuario;
+            TipoUsuario tipoUsuario;
             try {
-                tipousuario = em.getReference(TipoUsuario.class, id);
-                tipousuario.getIdTipoUsuario();
+                tipoUsuario = em.getReference(TipoUsuario.class, id);
+                tipoUsuario.getIdTipoUsuario();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tipousuario with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The tipoUsuario with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            List<Usuario> usuarioListOrphanCheck = tipousuario.getUsuarioList();
+            List<Usuario> usuarioListOrphanCheck = tipoUsuario.getUsuarioList();
             for (Usuario usuarioListOrphanCheckUsuario : usuarioListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Tipousuario (" + tipousuario + ") cannot be destroyed since the Usuario " + usuarioListOrphanCheckUsuario + " in its usuarioList field has a non-nullable idTipoUsuario field.");
+                illegalOrphanMessages.add("This TipoUsuario (" + tipoUsuario + ") cannot be destroyed since the Usuario " + usuarioListOrphanCheckUsuario + " in its usuarioList field has a non-nullable idTipoUsuario field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            em.remove(tipousuario);
+            em.remove(tipoUsuario);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -160,15 +160,15 @@ public class TipoUsuarioJpaController implements Serializable {
         }
     }
 
-    public List<TipoUsuario> findTipousuarioEntities() {
-        return findTipousuarioEntities(true, -1, -1);
+    public List<TipoUsuario> findTipoUsuarioEntities() {
+        return findTipoUsuarioEntities(true, -1, -1);
     }
 
-    public List<TipoUsuario> findTipousuarioEntities(int maxResults, int firstResult) {
-        return findTipousuarioEntities(false, maxResults, firstResult);
+    public List<TipoUsuario> findTipoUsuarioEntities(int maxResults, int firstResult) {
+        return findTipoUsuarioEntities(false, maxResults, firstResult);
     }
 
-    private List<TipoUsuario> findTipousuarioEntities(boolean all, int maxResults, int firstResult) {
+    private List<TipoUsuario> findTipoUsuarioEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
@@ -184,7 +184,7 @@ public class TipoUsuarioJpaController implements Serializable {
         }
     }
 
-    public TipoUsuario findTipousuario(String id) {
+    public TipoUsuario findTipoUsuario(String id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(TipoUsuario.class, id);
@@ -193,7 +193,7 @@ public class TipoUsuarioJpaController implements Serializable {
         }
     }
 
-    public int getTipousuarioCount() {
+    public int getTipoUsuarioCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();

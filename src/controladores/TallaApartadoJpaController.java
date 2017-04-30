@@ -34,34 +34,34 @@ public class TallaApartadoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(TallaApartado tallaapartado) throws PreexistingEntityException, Exception {
+    public void create(TallaApartado tallaApartado) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Talla idTalla = tallaapartado.getIdTalla();
+            Talla idTalla = tallaApartado.getIdTalla();
             if (idTalla != null) {
                 idTalla = em.getReference(idTalla.getClass(), idTalla.getIdTalla());
-                tallaapartado.setIdTalla(idTalla);
+                tallaApartado.setIdTalla(idTalla);
             }
-            Apartado idApartado = tallaapartado.getIdApartado();
+            Apartado idApartado = tallaApartado.getIdApartado();
             if (idApartado != null) {
                 idApartado = em.getReference(idApartado.getClass(), idApartado.getIdApartado());
-                tallaapartado.setIdApartado(idApartado);
+                tallaApartado.setIdApartado(idApartado);
             }
-            em.persist(tallaapartado);
+            em.persist(tallaApartado);
             if (idTalla != null) {
-                idTalla.getTallaapartadoList().add(tallaapartado);
+                idTalla.getTallaApartadoList().add(tallaApartado);
                 idTalla = em.merge(idTalla);
             }
             if (idApartado != null) {
-                idApartado.getTallaapartadoList().add(tallaapartado);
+                idApartado.getTallaApartadoList().add(tallaApartado);
                 idApartado = em.merge(idApartado);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findTallaapartado(tallaapartado.getIdTallaApartado()) != null) {
-                throw new PreexistingEntityException("Tallaapartado " + tallaapartado + " already exists.", ex);
+            if (findTallaApartado(tallaApartado.getIdTallaApartado()) != null) {
+                throw new PreexistingEntityException("TallaApartado " + tallaApartado + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -71,48 +71,48 @@ public class TallaApartadoJpaController implements Serializable {
         }
     }
 
-    public void edit(TallaApartado tallaapartado) throws NonexistentEntityException, Exception {
+    public void edit(TallaApartado tallaApartado) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TallaApartado persistentTallaapartado = em.find(TallaApartado.class, tallaapartado.getIdTallaApartado());
-            Talla idTallaOld = persistentTallaapartado.getIdTalla();
-            Talla idTallaNew = tallaapartado.getIdTalla();
-            Apartado idApartadoOld = persistentTallaapartado.getIdApartado();
-            Apartado idApartadoNew = tallaapartado.getIdApartado();
+            TallaApartado persistentTallaApartado = em.find(TallaApartado.class, tallaApartado.getIdTallaApartado());
+            Talla idTallaOld = persistentTallaApartado.getIdTalla();
+            Talla idTallaNew = tallaApartado.getIdTalla();
+            Apartado idApartadoOld = persistentTallaApartado.getIdApartado();
+            Apartado idApartadoNew = tallaApartado.getIdApartado();
             if (idTallaNew != null) {
                 idTallaNew = em.getReference(idTallaNew.getClass(), idTallaNew.getIdTalla());
-                tallaapartado.setIdTalla(idTallaNew);
+                tallaApartado.setIdTalla(idTallaNew);
             }
             if (idApartadoNew != null) {
                 idApartadoNew = em.getReference(idApartadoNew.getClass(), idApartadoNew.getIdApartado());
-                tallaapartado.setIdApartado(idApartadoNew);
+                tallaApartado.setIdApartado(idApartadoNew);
             }
-            tallaapartado = em.merge(tallaapartado);
+            tallaApartado = em.merge(tallaApartado);
             if (idTallaOld != null && !idTallaOld.equals(idTallaNew)) {
-                idTallaOld.getTallaapartadoList().remove(tallaapartado);
+                idTallaOld.getTallaApartadoList().remove(tallaApartado);
                 idTallaOld = em.merge(idTallaOld);
             }
             if (idTallaNew != null && !idTallaNew.equals(idTallaOld)) {
-                idTallaNew.getTallaapartadoList().add(tallaapartado);
+                idTallaNew.getTallaApartadoList().add(tallaApartado);
                 idTallaNew = em.merge(idTallaNew);
             }
             if (idApartadoOld != null && !idApartadoOld.equals(idApartadoNew)) {
-                idApartadoOld.getTallaapartadoList().remove(tallaapartado);
+                idApartadoOld.getTallaApartadoList().remove(tallaApartado);
                 idApartadoOld = em.merge(idApartadoOld);
             }
             if (idApartadoNew != null && !idApartadoNew.equals(idApartadoOld)) {
-                idApartadoNew.getTallaapartadoList().add(tallaapartado);
+                idApartadoNew.getTallaApartadoList().add(tallaApartado);
                 idApartadoNew = em.merge(idApartadoNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                String id = tallaapartado.getIdTallaApartado();
-                if (findTallaapartado(id) == null) {
-                    throw new NonexistentEntityException("The tallaapartado with id " + id + " no longer exists.");
+                String id = tallaApartado.getIdTallaApartado();
+                if (findTallaApartado(id) == null) {
+                    throw new NonexistentEntityException("The tallaApartado with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -128,24 +128,24 @@ public class TallaApartadoJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TallaApartado tallaapartado;
+            TallaApartado tallaApartado;
             try {
-                tallaapartado = em.getReference(TallaApartado.class, id);
-                tallaapartado.getIdTallaApartado();
+                tallaApartado = em.getReference(TallaApartado.class, id);
+                tallaApartado.getIdTallaApartado();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tallaapartado with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The tallaApartado with id " + id + " no longer exists.", enfe);
             }
-            Talla idTalla = tallaapartado.getIdTalla();
+            Talla idTalla = tallaApartado.getIdTalla();
             if (idTalla != null) {
-                idTalla.getTallaapartadoList().remove(tallaapartado);
+                idTalla.getTallaApartadoList().remove(tallaApartado);
                 idTalla = em.merge(idTalla);
             }
-            Apartado idApartado = tallaapartado.getIdApartado();
+            Apartado idApartado = tallaApartado.getIdApartado();
             if (idApartado != null) {
-                idApartado.getTallaapartadoList().remove(tallaapartado);
+                idApartado.getTallaApartadoList().remove(tallaApartado);
                 idApartado = em.merge(idApartado);
             }
-            em.remove(tallaapartado);
+            em.remove(tallaApartado);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -154,15 +154,15 @@ public class TallaApartadoJpaController implements Serializable {
         }
     }
 
-    public List<TallaApartado> findTallaapartadoEntities() {
-        return findTallaapartadoEntities(true, -1, -1);
+    public List<TallaApartado> findTallaApartadoEntities() {
+        return findTallaApartadoEntities(true, -1, -1);
     }
 
-    public List<TallaApartado> findTallaapartadoEntities(int maxResults, int firstResult) {
-        return findTallaapartadoEntities(false, maxResults, firstResult);
+    public List<TallaApartado> findTallaApartadoEntities(int maxResults, int firstResult) {
+        return findTallaApartadoEntities(false, maxResults, firstResult);
     }
 
-    private List<TallaApartado> findTallaapartadoEntities(boolean all, int maxResults, int firstResult) {
+    private List<TallaApartado> findTallaApartadoEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
@@ -178,7 +178,7 @@ public class TallaApartadoJpaController implements Serializable {
         }
     }
 
-    public TallaApartado findTallaapartado(String id) {
+    public TallaApartado findTallaApartado(String id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(TallaApartado.class, id);
@@ -187,7 +187,7 @@ public class TallaApartadoJpaController implements Serializable {
         }
     }
 
-    public int getTallaapartadoCount() {
+    public int getTallaApartadoCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();

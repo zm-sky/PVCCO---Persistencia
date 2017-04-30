@@ -38,11 +38,11 @@ public class ApartadoJpaController implements Serializable {
     }
 
     public void create(Apartado apartado) throws PreexistingEntityException, Exception {
-        if (apartado.getMovimientoenapartadoList() == null) {
-            apartado.setMovimientoenapartadoList(new ArrayList<MovimientoEnApartado>());
+        if (apartado.getMovimientoEnApartadoList() == null) {
+            apartado.setMovimientoEnApartadoList(new ArrayList<MovimientoEnApartado>());
         }
-        if (apartado.getTallaapartadoList() == null) {
-            apartado.setTallaapartadoList(new ArrayList<TallaApartado>());
+        if (apartado.getTallaApartadoList() == null) {
+            apartado.setTallaApartadoList(new ArrayList<TallaApartado>());
         }
         EntityManager em = null;
         try {
@@ -53,39 +53,39 @@ public class ApartadoJpaController implements Serializable {
                 idUsuario = em.getReference(idUsuario.getClass(), idUsuario.getIdUsuario());
                 apartado.setIdUsuario(idUsuario);
             }
-            List<MovimientoEnApartado> attachedMovimientoenapartadoList = new ArrayList<MovimientoEnApartado>();
-            for (MovimientoEnApartado movimientoenapartadoListMovimientoenapartadoToAttach : apartado.getMovimientoenapartadoList()) {
-                movimientoenapartadoListMovimientoenapartadoToAttach = em.getReference(movimientoenapartadoListMovimientoenapartadoToAttach.getClass(), movimientoenapartadoListMovimientoenapartadoToAttach.getIdMovimientoApartado());
-                attachedMovimientoenapartadoList.add(movimientoenapartadoListMovimientoenapartadoToAttach);
+            List<MovimientoEnApartado> attachedMovimientoEnApartadoList = new ArrayList<MovimientoEnApartado>();
+            for (MovimientoEnApartado movimientoEnApartadoListMovimientoEnApartadoToAttach : apartado.getMovimientoEnApartadoList()) {
+                movimientoEnApartadoListMovimientoEnApartadoToAttach = em.getReference(movimientoEnApartadoListMovimientoEnApartadoToAttach.getClass(), movimientoEnApartadoListMovimientoEnApartadoToAttach.getIdMovimientoApartado());
+                attachedMovimientoEnApartadoList.add(movimientoEnApartadoListMovimientoEnApartadoToAttach);
             }
-            apartado.setMovimientoenapartadoList(attachedMovimientoenapartadoList);
-            List<TallaApartado> attachedTallaapartadoList = new ArrayList<TallaApartado>();
-            for (TallaApartado tallaapartadoListTallaapartadoToAttach : apartado.getTallaapartadoList()) {
-                tallaapartadoListTallaapartadoToAttach = em.getReference(tallaapartadoListTallaapartadoToAttach.getClass(), tallaapartadoListTallaapartadoToAttach.getIdTallaApartado());
-                attachedTallaapartadoList.add(tallaapartadoListTallaapartadoToAttach);
+            apartado.setMovimientoEnApartadoList(attachedMovimientoEnApartadoList);
+            List<TallaApartado> attachedTallaApartadoList = new ArrayList<TallaApartado>();
+            for (TallaApartado tallaApartadoListTallaApartadoToAttach : apartado.getTallaApartadoList()) {
+                tallaApartadoListTallaApartadoToAttach = em.getReference(tallaApartadoListTallaApartadoToAttach.getClass(), tallaApartadoListTallaApartadoToAttach.getIdTallaApartado());
+                attachedTallaApartadoList.add(tallaApartadoListTallaApartadoToAttach);
             }
-            apartado.setTallaapartadoList(attachedTallaapartadoList);
+            apartado.setTallaApartadoList(attachedTallaApartadoList);
             em.persist(apartado);
             if (idUsuario != null) {
                 idUsuario.getApartadoList().add(apartado);
                 idUsuario = em.merge(idUsuario);
             }
-            for (MovimientoEnApartado movimientoenapartadoListMovimientoenapartado : apartado.getMovimientoenapartadoList()) {
-                Apartado oldIdApartadoOfMovimientoenapartadoListMovimientoenapartado = movimientoenapartadoListMovimientoenapartado.getIdApartado();
-                movimientoenapartadoListMovimientoenapartado.setIdApartado(apartado);
-                movimientoenapartadoListMovimientoenapartado = em.merge(movimientoenapartadoListMovimientoenapartado);
-                if (oldIdApartadoOfMovimientoenapartadoListMovimientoenapartado != null) {
-                    oldIdApartadoOfMovimientoenapartadoListMovimientoenapartado.getMovimientoenapartadoList().remove(movimientoenapartadoListMovimientoenapartado);
-                    oldIdApartadoOfMovimientoenapartadoListMovimientoenapartado = em.merge(oldIdApartadoOfMovimientoenapartadoListMovimientoenapartado);
+            for (MovimientoEnApartado movimientoEnApartadoListMovimientoEnApartado : apartado.getMovimientoEnApartadoList()) {
+                Apartado oldIdApartadoOfMovimientoEnApartadoListMovimientoEnApartado = movimientoEnApartadoListMovimientoEnApartado.getIdApartado();
+                movimientoEnApartadoListMovimientoEnApartado.setIdApartado(apartado);
+                movimientoEnApartadoListMovimientoEnApartado = em.merge(movimientoEnApartadoListMovimientoEnApartado);
+                if (oldIdApartadoOfMovimientoEnApartadoListMovimientoEnApartado != null) {
+                    oldIdApartadoOfMovimientoEnApartadoListMovimientoEnApartado.getMovimientoEnApartadoList().remove(movimientoEnApartadoListMovimientoEnApartado);
+                    oldIdApartadoOfMovimientoEnApartadoListMovimientoEnApartado = em.merge(oldIdApartadoOfMovimientoEnApartadoListMovimientoEnApartado);
                 }
             }
-            for (TallaApartado tallaapartadoListTallaapartado : apartado.getTallaapartadoList()) {
-                Apartado oldIdApartadoOfTallaapartadoListTallaapartado = tallaapartadoListTallaapartado.getIdApartado();
-                tallaapartadoListTallaapartado.setIdApartado(apartado);
-                tallaapartadoListTallaapartado = em.merge(tallaapartadoListTallaapartado);
-                if (oldIdApartadoOfTallaapartadoListTallaapartado != null) {
-                    oldIdApartadoOfTallaapartadoListTallaapartado.getTallaapartadoList().remove(tallaapartadoListTallaapartado);
-                    oldIdApartadoOfTallaapartadoListTallaapartado = em.merge(oldIdApartadoOfTallaapartadoListTallaapartado);
+            for (TallaApartado tallaApartadoListTallaApartado : apartado.getTallaApartadoList()) {
+                Apartado oldIdApartadoOfTallaApartadoListTallaApartado = tallaApartadoListTallaApartado.getIdApartado();
+                tallaApartadoListTallaApartado.setIdApartado(apartado);
+                tallaApartadoListTallaApartado = em.merge(tallaApartadoListTallaApartado);
+                if (oldIdApartadoOfTallaApartadoListTallaApartado != null) {
+                    oldIdApartadoOfTallaApartadoListTallaApartado.getTallaApartadoList().remove(tallaApartadoListTallaApartado);
+                    oldIdApartadoOfTallaApartadoListTallaApartado = em.merge(oldIdApartadoOfTallaApartadoListTallaApartado);
                 }
             }
             em.getTransaction().commit();
@@ -109,25 +109,25 @@ public class ApartadoJpaController implements Serializable {
             Apartado persistentApartado = em.find(Apartado.class, apartado.getIdApartado());
             Usuario idUsuarioOld = persistentApartado.getIdUsuario();
             Usuario idUsuarioNew = apartado.getIdUsuario();
-            List<MovimientoEnApartado> movimientoenapartadoListOld = persistentApartado.getMovimientoenapartadoList();
-            List<MovimientoEnApartado> movimientoenapartadoListNew = apartado.getMovimientoenapartadoList();
-            List<TallaApartado> tallaapartadoListOld = persistentApartado.getTallaapartadoList();
-            List<TallaApartado> tallaapartadoListNew = apartado.getTallaapartadoList();
+            List<MovimientoEnApartado> movimientoEnApartadoListOld = persistentApartado.getMovimientoEnApartadoList();
+            List<MovimientoEnApartado> movimientoEnApartadoListNew = apartado.getMovimientoEnApartadoList();
+            List<TallaApartado> tallaApartadoListOld = persistentApartado.getTallaApartadoList();
+            List<TallaApartado> tallaApartadoListNew = apartado.getTallaApartadoList();
             List<String> illegalOrphanMessages = null;
-            for (MovimientoEnApartado movimientoenapartadoListOldMovimientoenapartado : movimientoenapartadoListOld) {
-                if (!movimientoenapartadoListNew.contains(movimientoenapartadoListOldMovimientoenapartado)) {
+            for (MovimientoEnApartado movimientoEnApartadoListOldMovimientoEnApartado : movimientoEnApartadoListOld) {
+                if (!movimientoEnApartadoListNew.contains(movimientoEnApartadoListOldMovimientoEnApartado)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Movimientoenapartado " + movimientoenapartadoListOldMovimientoenapartado + " since its idApartado field is not nullable.");
+                    illegalOrphanMessages.add("You must retain MovimientoEnApartado " + movimientoEnApartadoListOldMovimientoEnApartado + " since its idApartado field is not nullable.");
                 }
             }
-            for (TallaApartado tallaapartadoListOldTallaapartado : tallaapartadoListOld) {
-                if (!tallaapartadoListNew.contains(tallaapartadoListOldTallaapartado)) {
+            for (TallaApartado tallaApartadoListOldTallaApartado : tallaApartadoListOld) {
+                if (!tallaApartadoListNew.contains(tallaApartadoListOldTallaApartado)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Tallaapartado " + tallaapartadoListOldTallaapartado + " since its idApartado field is not nullable.");
+                    illegalOrphanMessages.add("You must retain TallaApartado " + tallaApartadoListOldTallaApartado + " since its idApartado field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -137,20 +137,20 @@ public class ApartadoJpaController implements Serializable {
                 idUsuarioNew = em.getReference(idUsuarioNew.getClass(), idUsuarioNew.getIdUsuario());
                 apartado.setIdUsuario(idUsuarioNew);
             }
-            List<MovimientoEnApartado> attachedMovimientoenapartadoListNew = new ArrayList<MovimientoEnApartado>();
-            for (MovimientoEnApartado movimientoenapartadoListNewMovimientoenapartadoToAttach : movimientoenapartadoListNew) {
-                movimientoenapartadoListNewMovimientoenapartadoToAttach = em.getReference(movimientoenapartadoListNewMovimientoenapartadoToAttach.getClass(), movimientoenapartadoListNewMovimientoenapartadoToAttach.getIdMovimientoApartado());
-                attachedMovimientoenapartadoListNew.add(movimientoenapartadoListNewMovimientoenapartadoToAttach);
+            List<MovimientoEnApartado> attachedMovimientoEnApartadoListNew = new ArrayList<MovimientoEnApartado>();
+            for (MovimientoEnApartado movimientoEnApartadoListNewMovimientoEnApartadoToAttach : movimientoEnApartadoListNew) {
+                movimientoEnApartadoListNewMovimientoEnApartadoToAttach = em.getReference(movimientoEnApartadoListNewMovimientoEnApartadoToAttach.getClass(), movimientoEnApartadoListNewMovimientoEnApartadoToAttach.getIdMovimientoApartado());
+                attachedMovimientoEnApartadoListNew.add(movimientoEnApartadoListNewMovimientoEnApartadoToAttach);
             }
-            movimientoenapartadoListNew = attachedMovimientoenapartadoListNew;
-            apartado.setMovimientoenapartadoList(movimientoenapartadoListNew);
-            List<TallaApartado> attachedTallaapartadoListNew = new ArrayList<TallaApartado>();
-            for (TallaApartado tallaapartadoListNewTallaapartadoToAttach : tallaapartadoListNew) {
-                tallaapartadoListNewTallaapartadoToAttach = em.getReference(tallaapartadoListNewTallaapartadoToAttach.getClass(), tallaapartadoListNewTallaapartadoToAttach.getIdTallaApartado());
-                attachedTallaapartadoListNew.add(tallaapartadoListNewTallaapartadoToAttach);
+            movimientoEnApartadoListNew = attachedMovimientoEnApartadoListNew;
+            apartado.setMovimientoEnApartadoList(movimientoEnApartadoListNew);
+            List<TallaApartado> attachedTallaApartadoListNew = new ArrayList<TallaApartado>();
+            for (TallaApartado tallaApartadoListNewTallaApartadoToAttach : tallaApartadoListNew) {
+                tallaApartadoListNewTallaApartadoToAttach = em.getReference(tallaApartadoListNewTallaApartadoToAttach.getClass(), tallaApartadoListNewTallaApartadoToAttach.getIdTallaApartado());
+                attachedTallaApartadoListNew.add(tallaApartadoListNewTallaApartadoToAttach);
             }
-            tallaapartadoListNew = attachedTallaapartadoListNew;
-            apartado.setTallaapartadoList(tallaapartadoListNew);
+            tallaApartadoListNew = attachedTallaApartadoListNew;
+            apartado.setTallaApartadoList(tallaApartadoListNew);
             apartado = em.merge(apartado);
             if (idUsuarioOld != null && !idUsuarioOld.equals(idUsuarioNew)) {
                 idUsuarioOld.getApartadoList().remove(apartado);
@@ -160,25 +160,25 @@ public class ApartadoJpaController implements Serializable {
                 idUsuarioNew.getApartadoList().add(apartado);
                 idUsuarioNew = em.merge(idUsuarioNew);
             }
-            for (MovimientoEnApartado movimientoenapartadoListNewMovimientoenapartado : movimientoenapartadoListNew) {
-                if (!movimientoenapartadoListOld.contains(movimientoenapartadoListNewMovimientoenapartado)) {
-                    Apartado oldIdApartadoOfMovimientoenapartadoListNewMovimientoenapartado = movimientoenapartadoListNewMovimientoenapartado.getIdApartado();
-                    movimientoenapartadoListNewMovimientoenapartado.setIdApartado(apartado);
-                    movimientoenapartadoListNewMovimientoenapartado = em.merge(movimientoenapartadoListNewMovimientoenapartado);
-                    if (oldIdApartadoOfMovimientoenapartadoListNewMovimientoenapartado != null && !oldIdApartadoOfMovimientoenapartadoListNewMovimientoenapartado.equals(apartado)) {
-                        oldIdApartadoOfMovimientoenapartadoListNewMovimientoenapartado.getMovimientoenapartadoList().remove(movimientoenapartadoListNewMovimientoenapartado);
-                        oldIdApartadoOfMovimientoenapartadoListNewMovimientoenapartado = em.merge(oldIdApartadoOfMovimientoenapartadoListNewMovimientoenapartado);
+            for (MovimientoEnApartado movimientoEnApartadoListNewMovimientoEnApartado : movimientoEnApartadoListNew) {
+                if (!movimientoEnApartadoListOld.contains(movimientoEnApartadoListNewMovimientoEnApartado)) {
+                    Apartado oldIdApartadoOfMovimientoEnApartadoListNewMovimientoEnApartado = movimientoEnApartadoListNewMovimientoEnApartado.getIdApartado();
+                    movimientoEnApartadoListNewMovimientoEnApartado.setIdApartado(apartado);
+                    movimientoEnApartadoListNewMovimientoEnApartado = em.merge(movimientoEnApartadoListNewMovimientoEnApartado);
+                    if (oldIdApartadoOfMovimientoEnApartadoListNewMovimientoEnApartado != null && !oldIdApartadoOfMovimientoEnApartadoListNewMovimientoEnApartado.equals(apartado)) {
+                        oldIdApartadoOfMovimientoEnApartadoListNewMovimientoEnApartado.getMovimientoEnApartadoList().remove(movimientoEnApartadoListNewMovimientoEnApartado);
+                        oldIdApartadoOfMovimientoEnApartadoListNewMovimientoEnApartado = em.merge(oldIdApartadoOfMovimientoEnApartadoListNewMovimientoEnApartado);
                     }
                 }
             }
-            for (TallaApartado tallaapartadoListNewTallaapartado : tallaapartadoListNew) {
-                if (!tallaapartadoListOld.contains(tallaapartadoListNewTallaapartado)) {
-                    Apartado oldIdApartadoOfTallaapartadoListNewTallaapartado = tallaapartadoListNewTallaapartado.getIdApartado();
-                    tallaapartadoListNewTallaapartado.setIdApartado(apartado);
-                    tallaapartadoListNewTallaapartado = em.merge(tallaapartadoListNewTallaapartado);
-                    if (oldIdApartadoOfTallaapartadoListNewTallaapartado != null && !oldIdApartadoOfTallaapartadoListNewTallaapartado.equals(apartado)) {
-                        oldIdApartadoOfTallaapartadoListNewTallaapartado.getTallaapartadoList().remove(tallaapartadoListNewTallaapartado);
-                        oldIdApartadoOfTallaapartadoListNewTallaapartado = em.merge(oldIdApartadoOfTallaapartadoListNewTallaapartado);
+            for (TallaApartado tallaApartadoListNewTallaApartado : tallaApartadoListNew) {
+                if (!tallaApartadoListOld.contains(tallaApartadoListNewTallaApartado)) {
+                    Apartado oldIdApartadoOfTallaApartadoListNewTallaApartado = tallaApartadoListNewTallaApartado.getIdApartado();
+                    tallaApartadoListNewTallaApartado.setIdApartado(apartado);
+                    tallaApartadoListNewTallaApartado = em.merge(tallaApartadoListNewTallaApartado);
+                    if (oldIdApartadoOfTallaApartadoListNewTallaApartado != null && !oldIdApartadoOfTallaApartadoListNewTallaApartado.equals(apartado)) {
+                        oldIdApartadoOfTallaApartadoListNewTallaApartado.getTallaApartadoList().remove(tallaApartadoListNewTallaApartado);
+                        oldIdApartadoOfTallaApartadoListNewTallaApartado = em.merge(oldIdApartadoOfTallaApartadoListNewTallaApartado);
                     }
                 }
             }
@@ -212,19 +212,19 @@ public class ApartadoJpaController implements Serializable {
                 throw new NonexistentEntityException("The apartado with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            List<MovimientoEnApartado> movimientoenapartadoListOrphanCheck = apartado.getMovimientoenapartadoList();
-            for (MovimientoEnApartado movimientoenapartadoListOrphanCheckMovimientoenapartado : movimientoenapartadoListOrphanCheck) {
+            List<MovimientoEnApartado> movimientoEnApartadoListOrphanCheck = apartado.getMovimientoEnApartadoList();
+            for (MovimientoEnApartado movimientoEnApartadoListOrphanCheckMovimientoEnApartado : movimientoEnApartadoListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Apartado (" + apartado + ") cannot be destroyed since the Movimientoenapartado " + movimientoenapartadoListOrphanCheckMovimientoenapartado + " in its movimientoenapartadoList field has a non-nullable idApartado field.");
+                illegalOrphanMessages.add("This Apartado (" + apartado + ") cannot be destroyed since the MovimientoEnApartado " + movimientoEnApartadoListOrphanCheckMovimientoEnApartado + " in its movimientoEnApartadoList field has a non-nullable idApartado field.");
             }
-            List<TallaApartado> tallaapartadoListOrphanCheck = apartado.getTallaapartadoList();
-            for (TallaApartado tallaapartadoListOrphanCheckTallaapartado : tallaapartadoListOrphanCheck) {
+            List<TallaApartado> tallaApartadoListOrphanCheck = apartado.getTallaApartadoList();
+            for (TallaApartado tallaApartadoListOrphanCheckTallaApartado : tallaApartadoListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Apartado (" + apartado + ") cannot be destroyed since the Tallaapartado " + tallaapartadoListOrphanCheckTallaapartado + " in its tallaapartadoList field has a non-nullable idApartado field.");
+                illegalOrphanMessages.add("This Apartado (" + apartado + ") cannot be destroyed since the TallaApartado " + tallaApartadoListOrphanCheckTallaApartado + " in its tallaApartadoList field has a non-nullable idApartado field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);

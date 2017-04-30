@@ -33,25 +33,25 @@ public class BajaDeInventarioJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(BajaDeInventario bajadeinventario) throws PreexistingEntityException, Exception {
+    public void create(BajaDeInventario bajaDeInventario) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Talla idTalla = bajadeinventario.getIdTalla();
+            Talla idTalla = bajaDeInventario.getIdTalla();
             if (idTalla != null) {
                 idTalla = em.getReference(idTalla.getClass(), idTalla.getIdTalla());
-                bajadeinventario.setIdTalla(idTalla);
+                bajaDeInventario.setIdTalla(idTalla);
             }
-            em.persist(bajadeinventario);
+            em.persist(bajaDeInventario);
             if (idTalla != null) {
-                idTalla.getBajadeinventarioList().add(bajadeinventario);
+                idTalla.getBajaDeInventarioList().add(bajaDeInventario);
                 idTalla = em.merge(idTalla);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findBajadeinventario(bajadeinventario.getIdBajaInventario()) != null) {
-                throw new PreexistingEntityException("Bajadeinventario " + bajadeinventario + " already exists.", ex);
+            if (findBajaDeInventario(bajaDeInventario.getIdBajaInventario()) != null) {
+                throw new PreexistingEntityException("BajaDeInventario " + bajaDeInventario + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -61,34 +61,34 @@ public class BajaDeInventarioJpaController implements Serializable {
         }
     }
 
-    public void edit(BajaDeInventario bajadeinventario) throws NonexistentEntityException, Exception {
+    public void edit(BajaDeInventario bajaDeInventario) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            BajaDeInventario persistentBajadeinventario = em.find(BajaDeInventario.class, bajadeinventario.getIdBajaInventario());
-            Talla idTallaOld = persistentBajadeinventario.getIdTalla();
-            Talla idTallaNew = bajadeinventario.getIdTalla();
+            BajaDeInventario persistentBajaDeInventario = em.find(BajaDeInventario.class, bajaDeInventario.getIdBajaInventario());
+            Talla idTallaOld = persistentBajaDeInventario.getIdTalla();
+            Talla idTallaNew = bajaDeInventario.getIdTalla();
             if (idTallaNew != null) {
                 idTallaNew = em.getReference(idTallaNew.getClass(), idTallaNew.getIdTalla());
-                bajadeinventario.setIdTalla(idTallaNew);
+                bajaDeInventario.setIdTalla(idTallaNew);
             }
-            bajadeinventario = em.merge(bajadeinventario);
+            bajaDeInventario = em.merge(bajaDeInventario);
             if (idTallaOld != null && !idTallaOld.equals(idTallaNew)) {
-                idTallaOld.getBajadeinventarioList().remove(bajadeinventario);
+                idTallaOld.getBajaDeInventarioList().remove(bajaDeInventario);
                 idTallaOld = em.merge(idTallaOld);
             }
             if (idTallaNew != null && !idTallaNew.equals(idTallaOld)) {
-                idTallaNew.getBajadeinventarioList().add(bajadeinventario);
+                idTallaNew.getBajaDeInventarioList().add(bajaDeInventario);
                 idTallaNew = em.merge(idTallaNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                String id = bajadeinventario.getIdBajaInventario();
-                if (findBajadeinventario(id) == null) {
-                    throw new NonexistentEntityException("The bajadeinventario with id " + id + " no longer exists.");
+                String id = bajaDeInventario.getIdBajaInventario();
+                if (findBajaDeInventario(id) == null) {
+                    throw new NonexistentEntityException("The bajaDeInventario with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -104,19 +104,19 @@ public class BajaDeInventarioJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            BajaDeInventario bajadeinventario;
+            BajaDeInventario bajaDeInventario;
             try {
-                bajadeinventario = em.getReference(BajaDeInventario.class, id);
-                bajadeinventario.getIdBajaInventario();
+                bajaDeInventario = em.getReference(BajaDeInventario.class, id);
+                bajaDeInventario.getIdBajaInventario();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The bajadeinventario with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The bajaDeInventario with id " + id + " no longer exists.", enfe);
             }
-            Talla idTalla = bajadeinventario.getIdTalla();
+            Talla idTalla = bajaDeInventario.getIdTalla();
             if (idTalla != null) {
-                idTalla.getBajadeinventarioList().remove(bajadeinventario);
+                idTalla.getBajaDeInventarioList().remove(bajaDeInventario);
                 idTalla = em.merge(idTalla);
             }
-            em.remove(bajadeinventario);
+            em.remove(bajaDeInventario);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -125,15 +125,15 @@ public class BajaDeInventarioJpaController implements Serializable {
         }
     }
 
-    public List<BajaDeInventario> findBajadeinventarioEntities() {
-        return findBajadeinventarioEntities(true, -1, -1);
+    public List<BajaDeInventario> findBajaDeInventarioEntities() {
+        return findBajaDeInventarioEntities(true, -1, -1);
     }
 
-    public List<BajaDeInventario> findBajadeinventarioEntities(int maxResults, int firstResult) {
-        return findBajadeinventarioEntities(false, maxResults, firstResult);
+    public List<BajaDeInventario> findBajaDeInventarioEntities(int maxResults, int firstResult) {
+        return findBajaDeInventarioEntities(false, maxResults, firstResult);
     }
 
-    private List<BajaDeInventario> findBajadeinventarioEntities(boolean all, int maxResults, int firstResult) {
+    private List<BajaDeInventario> findBajaDeInventarioEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
@@ -149,7 +149,7 @@ public class BajaDeInventarioJpaController implements Serializable {
         }
     }
 
-    public BajaDeInventario findBajadeinventario(String id) {
+    public BajaDeInventario findBajaDeInventario(String id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(BajaDeInventario.class, id);
@@ -158,7 +158,7 @@ public class BajaDeInventarioJpaController implements Serializable {
         }
     }
 
-    public int getBajadeinventarioCount() {
+    public int getBajaDeInventarioCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();

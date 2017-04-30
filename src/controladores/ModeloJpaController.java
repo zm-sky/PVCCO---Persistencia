@@ -206,8 +206,7 @@ public class ModeloJpaController implements Serializable {
             em.close();
         }
     }
-    
-    /**
+            /**
      * Regresa un modelo el cual el nombre sera igual al nombre del modelo del
      * paramentro.
      *

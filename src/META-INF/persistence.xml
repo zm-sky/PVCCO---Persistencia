@@ -2,23 +2,18 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="PVCCO_-_1.0PU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>objetosNegocio.Apartado</class>
     <class>objetosNegocio.BajaDeInventario</class>
+    <class>objetosNegocio.Modelo</class>
     <class>objetosNegocio.MovimientoEnApartado</class>
     <class>objetosNegocio.MovimientoEnVenta</class>
+    <class>objetosNegocio.Talla</class>
     <class>objetosNegocio.TallaApartado</class>
     <class>objetosNegocio.TipoUsuario</class>
+    <class>objetosNegocio.Usuario</class>
+    <class>objetosNegocio.Venta</class>
     <class>objetosNegocio.VentaTalla</class>
-    <class>objectosNegocio.Ventatalla</class>
-    <class>objectosNegocio.Modelo</class>
-    <class>objectosNegocio.Apartado</class>
-    <class>objectosNegocio.Bajadeinventario</class>
-    <class>objectosNegocio.Movimientoenventa</class>
-    <class>objectosNegocio.Tallaapartado</class>
-    <class>objectosNegocio.Tipousuario</class>
-    <class>objectosNegocio.Talla</class>
-    <class>objectosNegocio.Venta</class>
-    <class>objectosNegocio.Movimientoenapartado</class>
-    <class>objectosNegocio.Usuario</class>
+    <shared-cache-mode>ALL</shared-cache-mode>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/pvcco?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

@@ -33,25 +33,25 @@ public class MovimientoEnApartadoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(MovimientoEnApartado movimientoenapartado) throws PreexistingEntityException, Exception {
+    public void create(MovimientoEnApartado movimientoEnApartado) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Apartado idApartado = movimientoenapartado.getIdApartado();
+            Apartado idApartado = movimientoEnApartado.getIdApartado();
             if (idApartado != null) {
                 idApartado = em.getReference(idApartado.getClass(), idApartado.getIdApartado());
-                movimientoenapartado.setIdApartado(idApartado);
+                movimientoEnApartado.setIdApartado(idApartado);
             }
-            em.persist(movimientoenapartado);
+            em.persist(movimientoEnApartado);
             if (idApartado != null) {
-                idApartado.getMovimientoenapartadoList().add(movimientoenapartado);
+                idApartado.getMovimientoEnApartadoList().add(movimientoEnApartado);
                 idApartado = em.merge(idApartado);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findMovimientoenapartado(movimientoenapartado.getIdMovimientoApartado()) != null) {
-                throw new PreexistingEntityException("Movimientoenapartado " + movimientoenapartado + " already exists.", ex);
+            if (findMovimientoEnApartado(movimientoEnApartado.getIdMovimientoApartado()) != null) {
+                throw new PreexistingEntityException("MovimientoEnApartado " + movimientoEnApartado + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -61,34 +61,34 @@ public class MovimientoEnApartadoJpaController implements Serializable {
         }
     }
 
-    public void edit(MovimientoEnApartado movimientoenapartado) throws NonexistentEntityException, Exception {
+    public void edit(MovimientoEnApartado movimientoEnApartado) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            MovimientoEnApartado persistentMovimientoenapartado = em.find(MovimientoEnApartado.class, movimientoenapartado.getIdMovimientoApartado());
-            Apartado idApartadoOld = persistentMovimientoenapartado.getIdApartado();
-            Apartado idApartadoNew = movimientoenapartado.getIdApartado();
+            MovimientoEnApartado persistentMovimientoEnApartado = em.find(MovimientoEnApartado.class, movimientoEnApartado.getIdMovimientoApartado());
+            Apartado idApartadoOld = persistentMovimientoEnApartado.getIdApartado();
+            Apartado idApartadoNew = movimientoEnApartado.getIdApartado();
             if (idApartadoNew != null) {
                 idApartadoNew = em.getReference(idApartadoNew.getClass(), idApartadoNew.getIdApartado());
-                movimientoenapartado.setIdApartado(idApartadoNew);
+                movimientoEnApartado.setIdApartado(idApartadoNew);
             }
-            movimientoenapartado = em.merge(movimientoenapartado);
+            movimientoEnApartado = em.merge(movimientoEnApartado);
             if (idApartadoOld != null && !idApartadoOld.equals(idApartadoNew)) {
-                idApartadoOld.getMovimientoenapartadoList().remove(movimientoenapartado);
+                idApartadoOld.getMovimientoEnApartadoList().remove(movimientoEnApartado);
                 idApartadoOld = em.merge(idApartadoOld);
             }
             if (idApartadoNew != null && !idApartadoNew.equals(idApartadoOld)) {
-                idApartadoNew.getMovimientoenapartadoList().add(movimientoenapartado);
+                idApartadoNew.getMovimientoEnApartadoList().add(movimientoEnApartado);
                 idApartadoNew = em.merge(idApartadoNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                String id = movimientoenapartado.getIdMovimientoApartado();
-                if (findMovimientoenapartado(id) == null) {
-                    throw new NonexistentEntityException("The movimientoenapartado with id " + id + " no longer exists.");
+                String id = movimientoEnApartado.getIdMovimientoApartado();
+                if (findMovimientoEnApartado(id) == null) {
+                    throw new NonexistentEntityException("The movimientoEnApartado with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -104,19 +104,19 @@ public class MovimientoEnApartadoJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            MovimientoEnApartado movimientoenapartado;
+            MovimientoEnApartado movimientoEnApartado;
             try {
-                movimientoenapartado = em.getReference(MovimientoEnApartado.class, id);
-                movimientoenapartado.getIdMovimientoApartado();
+                movimientoEnApartado = em.getReference(MovimientoEnApartado.class, id);
+                movimientoEnApartado.getIdMovimientoApartado();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The movimientoenapartado with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The movimientoEnApartado with id " + id + " no longer exists.", enfe);
             }
-            Apartado idApartado = movimientoenapartado.getIdApartado();
+            Apartado idApartado = movimientoEnApartado.getIdApartado();
             if (idApartado != null) {
-                idApartado.getMovimientoenapartadoList().remove(movimientoenapartado);
+                idApartado.getMovimientoEnApartadoList().remove(movimientoEnApartado);
                 idApartado = em.merge(idApartado);
             }
-            em.remove(movimientoenapartado);
+            em.remove(movimientoEnApartado);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -125,15 +125,15 @@ public class MovimientoEnApartadoJpaController implements Serializable {
         }
     }
 
-    public List<MovimientoEnApartado> findMovimientoenapartadoEntities() {
-        return findMovimientoenapartadoEntities(true, -1, -1);
+    public List<MovimientoEnApartado> findMovimientoEnApartadoEntities() {
+        return findMovimientoEnApartadoEntities(true, -1, -1);
     }
 
-    public List<MovimientoEnApartado> findMovimientoenapartadoEntities(int maxResults, int firstResult) {
-        return findMovimientoenapartadoEntities(false, maxResults, firstResult);
+    public List<MovimientoEnApartado> findMovimientoEnApartadoEntities(int maxResults, int firstResult) {
+        return findMovimientoEnApartadoEntities(false, maxResults, firstResult);
     }
 
-    private List<MovimientoEnApartado> findMovimientoenapartadoEntities(boolean all, int maxResults, int firstResult) {
+    private List<MovimientoEnApartado> findMovimientoEnApartadoEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
@@ -149,7 +149,7 @@ public class MovimientoEnApartadoJpaController implements Serializable {
         }
     }
 
-    public MovimientoEnApartado findMovimientoenapartado(String id) {
+    public MovimientoEnApartado findMovimientoEnApartado(String id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(MovimientoEnApartado.class, id);
@@ -158,7 +158,7 @@ public class MovimientoEnApartadoJpaController implements Serializable {
         }
     }
 
-    public int getMovimientoenapartadoCount() {
+    public int getMovimientoEnApartadoCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
