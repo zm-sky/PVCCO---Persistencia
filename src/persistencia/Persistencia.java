@@ -1,17 +1,29 @@
 
 package persistencia;
 
+import objetosNegocio.Venta;
+import objetosNegocio.Modelo;
+import objetosNegocio.Apartado;
+import objetosNegocio.Talla;
 import controladores.ApartadoJpaController;
 import controladores.BajaDeInventarioJpaController;
 import controladores.ModeloJpaController;
 import controladores.MovimientoEnApartadoJpaController;
+import controladores.MovimientoEnVentaJpaController;
 import controladores.TallaApartadoJpaController;
 import controladores.TallaJpaController;
+import controladores.VentaJpaController;
+import controladores.VentaTallaJpaController;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import objetosNegocio.BajaDeInventario;
+import objetosNegocio.MovimientoEnApartado;
+import objetosNegocio.MovimientoEnVenta;
+import objetosNegocio.TallaApartado;
+import objetosNegocio.VentaTalla;
 import pvcco.interfaces.IntPersistencia;
-import objetosNegocio.*;
+
 
 /**
  *
@@ -27,9 +39,9 @@ public class Persistencia implements IntPersistencia{
     private BajaDeInventarioJpaController bajaDeInventarioJpaController;
     //private TipoUsuarioJpaController tipousuarioJpaController;
     //private UsuarioJpaController usuarioJpaController;
-    //private VentaJpaController ventaJpaController;
-    //private MovimientoEnVentaJpaController movimientoenventaJpaController;
-    //private VentaTallaJpaController ventatallaJpaController;
+    private VentaJpaController ventaJpaController;
+    private MovimientoEnVentaJpaController movimientoenventaJpaController;
+    private VentaTallaJpaController ventatallaJpaController;
 
     public Persistencia(){
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("PVCCO_-_1.0PU");
@@ -42,9 +54,9 @@ public class Persistencia implements IntPersistencia{
         bajaDeInventarioJpaController = new BajaDeInventarioJpaController(emf);
         //tipousuarioJpaController = new TipoUsuarioJpaController(emf);
         //usuarioJpaController = new UsuarioJpaController(emf);
-        //ventaJpaController = new VentaJpaController(emf);
-        //movimientoenventaJpaController = new MovimientoEnVentaJpaController(emf);
-        //ventatallaJpaController = new VentaTallaJpaController(emf);
+        ventaJpaController = new VentaJpaController(emf);
+        movimientoenventaJpaController = new MovimientoEnVentaJpaController(emf);
+        ventatallaJpaController = new VentaTallaJpaController(emf);
     }
     
     @Override
@@ -124,7 +136,7 @@ public class Persistencia implements IntPersistencia{
 
     @Override
     public List<BajaDeInventario> obtenBajasDeInventario() throws Exception {
-        return bajaDeInventarioJpaController.findBajaDeInventarioEntities();
+        return bajaDeInventarioJpaController.findBajadeinventarioEntities();
     }
 
     @Override
@@ -159,17 +171,17 @@ public class Persistencia implements IntPersistencia{
 
     @Override
     public BajaDeInventario obten(BajaDeInventario baja) throws Exception {
-        return bajaDeInventarioJpaController.findBajaDeInventario(baja.getIdBajaInventario());
+        return bajaDeInventarioJpaController.findBajadeinventario(baja.getIdBajaInventario());
     }
 
     @Override
     public MovimientoEnApartado obten(MovimientoEnApartado mov) throws Exception {
-        return movApartadoJpa.findMovimientoEnApartado(mov.getIdMovimientoApartado());
+        return movApartadoJpa.findMovimientoenapartado(mov.getIdMovimientoApartado());
     }
 
     @Override
     public List<MovimientoEnApartado> obtenAbonosRegistrados() throws Exception {
-       return movApartadoJpa.findMovimientoEnApartadoEntities();
+       return movApartadoJpa.findMovimientoenapartadoEntities();
     }
 
     @Override
@@ -189,12 +201,12 @@ public class Persistencia implements IntPersistencia{
 
     @Override
     public List<TallaApartado> obtenTallasApartadas() throws Exception {
-        return tallaApartadoJpa.findTallaApartadoEntities();
+        return tallaApartadoJpa.findTallaapartadoEntities();
     }
 
     @Override
     public TallaApartado obten(TallaApartado talla) throws Exception {
-        return tallaApartadoJpa.findTallaApartado(talla.getIdTallaApartado());
+        return tallaApartadoJpa.findTallaapartado(talla.getIdTallaApartado());
     }
 
     @Override
@@ -210,6 +222,81 @@ public class Persistencia implements IntPersistencia{
     @Override
     public List<Talla> obtenTallasDeModelo(Modelo modelo) throws Exception {
         return tallaJpa.obtenTallasDeModelo(modelo);
+    }
+
+    @Override
+    public void agregar(Venta venta) throws Exception {
+        ventaJpaController.create(venta);
+    }
+
+    @Override
+    public void actualizar(Venta venta) throws Exception {
+        ventaJpaController.edit(venta);
+    }
+
+    @Override
+    public void eliminar(Venta venta) throws Exception {
+        ventaJpaController.destroy(venta.getIdVenta());
+    }
+
+    @Override
+    public void agregar(VentaTalla ventaTalla) throws Exception {
+        ventatallaJpaController.create(ventaTalla);
+    }
+
+    @Override
+    public void actualizar(VentaTalla ventaTalla) throws Exception {
+        ventatallaJpaController.edit(ventaTalla);
+    }
+
+    @Override
+    public void eliminar(VentaTalla ventaTalla) throws Exception {
+        ventatallaJpaController.destroy(ventaTalla.getIdVentaTalla());
+    }
+
+    @Override
+    public void agregar(MovimientoEnVenta mov) throws Exception {
+        movimientoenventaJpaController.create(mov);
+    }
+
+    @Override
+    public void actualizar(MovimientoEnVenta mov) throws Exception {
+        movimientoenventaJpaController.edit(mov);
+    }
+
+    @Override
+    public void eliminar(MovimientoEnVenta mov) throws Exception {
+        movimientoenventaJpaController.destroy(mov.getIdMovimientoVenta());
+    }
+
+    @Override
+    public Venta obten(Venta venta) throws Exception {
+        return ventaJpaController.findVenta(venta.getIdVenta());
+    }
+
+    @Override
+    public VentaTalla obten(VentaTalla ventaTalla) throws Exception {
+        return ventatallaJpaController.findVentatalla(ventaTalla.getIdVentaTalla());
+    }
+
+    @Override
+    public MovimientoEnVenta obten(MovimientoEnVenta mov) throws Exception {
+        return movimientoenventaJpaController.findMovimientoenventa(mov.getIdMovimientoVenta());
+    }
+
+    @Override
+    public List<Venta> obtenVentas() throws Exception {
+        return ventaJpaController.findVentaEntities();
+    }
+
+    @Override
+    public List<MovimientoEnVenta> obtenMovimientosEnVenta() throws Exception {
+        return movimientoenventaJpaController.findMovimientoenventaEntities();
+    }
+
+    @Override
+    public List<VentaTalla> obtenVentaTallas() throws Exception {
+        return ventatallaJpaController.findVentatallaEntities();
     }
 
 }

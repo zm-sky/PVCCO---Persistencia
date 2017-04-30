@@ -1,4 +1,8 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package controladores;
 
 import controladores.exceptions.IllegalOrphanException;
@@ -12,7 +16,6 @@ import javax.persistence.criteria.Root;
 import objetosNegocio.TipoUsuario;
 import objetosNegocio.Venta;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -21,7 +24,7 @@ import objetosNegocio.Usuario;
 
 /**
  *
- * @author Raul Karim Sabag Ballesteros
+ * @author zippy
  */
 public class UsuarioJpaController implements Serializable {
 
@@ -35,11 +38,11 @@ public class UsuarioJpaController implements Serializable {
     }
 
     public void create(Usuario usuario) throws PreexistingEntityException, Exception {
-        if (usuario.getVentaCollection() == null) {
-            usuario.setVentaCollection(new ArrayList<Venta>());
+        if (usuario.getVentaList() == null) {
+            usuario.setVentaList(new ArrayList<Venta>());
         }
-        if (usuario.getApartadoCollection() == null) {
-            usuario.setApartadoCollection(new ArrayList<Apartado>());
+        if (usuario.getApartadoList() == null) {
+            usuario.setApartadoList(new ArrayList<Apartado>());
         }
         EntityManager em = null;
         try {
@@ -50,39 +53,39 @@ public class UsuarioJpaController implements Serializable {
                 idTipoUsuario = em.getReference(idTipoUsuario.getClass(), idTipoUsuario.getIdTipoUsuario());
                 usuario.setIdTipoUsuario(idTipoUsuario);
             }
-            Collection<Venta> attachedVentaCollection = new ArrayList<Venta>();
-            for (Venta ventaCollectionVentaToAttach : usuario.getVentaCollection()) {
-                ventaCollectionVentaToAttach = em.getReference(ventaCollectionVentaToAttach.getClass(), ventaCollectionVentaToAttach.getIdVenta());
-                attachedVentaCollection.add(ventaCollectionVentaToAttach);
+            List<Venta> attachedVentaList = new ArrayList<Venta>();
+            for (Venta ventaListVentaToAttach : usuario.getVentaList()) {
+                ventaListVentaToAttach = em.getReference(ventaListVentaToAttach.getClass(), ventaListVentaToAttach.getIdVenta());
+                attachedVentaList.add(ventaListVentaToAttach);
             }
-            usuario.setVentaCollection(attachedVentaCollection);
-            Collection<Apartado> attachedApartadoCollection = new ArrayList<Apartado>();
-            for (Apartado apartadoCollectionApartadoToAttach : usuario.getApartadoCollection()) {
-                apartadoCollectionApartadoToAttach = em.getReference(apartadoCollectionApartadoToAttach.getClass(), apartadoCollectionApartadoToAttach.getIdApartado());
-                attachedApartadoCollection.add(apartadoCollectionApartadoToAttach);
+            usuario.setVentaList(attachedVentaList);
+            List<Apartado> attachedApartadoList = new ArrayList<Apartado>();
+            for (Apartado apartadoListApartadoToAttach : usuario.getApartadoList()) {
+                apartadoListApartadoToAttach = em.getReference(apartadoListApartadoToAttach.getClass(), apartadoListApartadoToAttach.getIdApartado());
+                attachedApartadoList.add(apartadoListApartadoToAttach);
             }
-            usuario.setApartadoCollection(attachedApartadoCollection);
+            usuario.setApartadoList(attachedApartadoList);
             em.persist(usuario);
             if (idTipoUsuario != null) {
-                idTipoUsuario.getUsuarioCollection().add(usuario);
+                idTipoUsuario.getUsuarioList().add(usuario);
                 idTipoUsuario = em.merge(idTipoUsuario);
             }
-            for (Venta ventaCollectionVenta : usuario.getVentaCollection()) {
-                Usuario oldIdUsuarioOfVentaCollectionVenta = ventaCollectionVenta.getIdUsuario();
-                ventaCollectionVenta.setIdUsuario(usuario);
-                ventaCollectionVenta = em.merge(ventaCollectionVenta);
-                if (oldIdUsuarioOfVentaCollectionVenta != null) {
-                    oldIdUsuarioOfVentaCollectionVenta.getVentaCollection().remove(ventaCollectionVenta);
-                    oldIdUsuarioOfVentaCollectionVenta = em.merge(oldIdUsuarioOfVentaCollectionVenta);
+            for (Venta ventaListVenta : usuario.getVentaList()) {
+                Usuario oldIdUsuarioOfVentaListVenta = ventaListVenta.getIdUsuario();
+                ventaListVenta.setIdUsuario(usuario);
+                ventaListVenta = em.merge(ventaListVenta);
+                if (oldIdUsuarioOfVentaListVenta != null) {
+                    oldIdUsuarioOfVentaListVenta.getVentaList().remove(ventaListVenta);
+                    oldIdUsuarioOfVentaListVenta = em.merge(oldIdUsuarioOfVentaListVenta);
                 }
             }
-            for (Apartado apartadoCollectionApartado : usuario.getApartadoCollection()) {
-                Usuario oldIdUsuarioOfApartadoCollectionApartado = apartadoCollectionApartado.getIdUsuario();
-                apartadoCollectionApartado.setIdUsuario(usuario);
-                apartadoCollectionApartado = em.merge(apartadoCollectionApartado);
-                if (oldIdUsuarioOfApartadoCollectionApartado != null) {
-                    oldIdUsuarioOfApartadoCollectionApartado.getApartadoCollection().remove(apartadoCollectionApartado);
-                    oldIdUsuarioOfApartadoCollectionApartado = em.merge(oldIdUsuarioOfApartadoCollectionApartado);
+            for (Apartado apartadoListApartado : usuario.getApartadoList()) {
+                Usuario oldIdUsuarioOfApartadoListApartado = apartadoListApartado.getIdUsuario();
+                apartadoListApartado.setIdUsuario(usuario);
+                apartadoListApartado = em.merge(apartadoListApartado);
+                if (oldIdUsuarioOfApartadoListApartado != null) {
+                    oldIdUsuarioOfApartadoListApartado.getApartadoList().remove(apartadoListApartado);
+                    oldIdUsuarioOfApartadoListApartado = em.merge(oldIdUsuarioOfApartadoListApartado);
                 }
             }
             em.getTransaction().commit();
@@ -106,25 +109,25 @@ public class UsuarioJpaController implements Serializable {
             Usuario persistentUsuario = em.find(Usuario.class, usuario.getIdUsuario());
             TipoUsuario idTipoUsuarioOld = persistentUsuario.getIdTipoUsuario();
             TipoUsuario idTipoUsuarioNew = usuario.getIdTipoUsuario();
-            Collection<Venta> ventaCollectionOld = persistentUsuario.getVentaCollection();
-            Collection<Venta> ventaCollectionNew = usuario.getVentaCollection();
-            Collection<Apartado> apartadoCollectionOld = persistentUsuario.getApartadoCollection();
-            Collection<Apartado> apartadoCollectionNew = usuario.getApartadoCollection();
+            List<Venta> ventaListOld = persistentUsuario.getVentaList();
+            List<Venta> ventaListNew = usuario.getVentaList();
+            List<Apartado> apartadoListOld = persistentUsuario.getApartadoList();
+            List<Apartado> apartadoListNew = usuario.getApartadoList();
             List<String> illegalOrphanMessages = null;
-            for (Venta ventaCollectionOldVenta : ventaCollectionOld) {
-                if (!ventaCollectionNew.contains(ventaCollectionOldVenta)) {
+            for (Venta ventaListOldVenta : ventaListOld) {
+                if (!ventaListNew.contains(ventaListOldVenta)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Venta " + ventaCollectionOldVenta + " since its idUsuario field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Venta " + ventaListOldVenta + " since its idUsuario field is not nullable.");
                 }
             }
-            for (Apartado apartadoCollectionOldApartado : apartadoCollectionOld) {
-                if (!apartadoCollectionNew.contains(apartadoCollectionOldApartado)) {
+            for (Apartado apartadoListOldApartado : apartadoListOld) {
+                if (!apartadoListNew.contains(apartadoListOldApartado)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Apartado " + apartadoCollectionOldApartado + " since its idUsuario field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Apartado " + apartadoListOldApartado + " since its idUsuario field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -134,48 +137,48 @@ public class UsuarioJpaController implements Serializable {
                 idTipoUsuarioNew = em.getReference(idTipoUsuarioNew.getClass(), idTipoUsuarioNew.getIdTipoUsuario());
                 usuario.setIdTipoUsuario(idTipoUsuarioNew);
             }
-            Collection<Venta> attachedVentaCollectionNew = new ArrayList<Venta>();
-            for (Venta ventaCollectionNewVentaToAttach : ventaCollectionNew) {
-                ventaCollectionNewVentaToAttach = em.getReference(ventaCollectionNewVentaToAttach.getClass(), ventaCollectionNewVentaToAttach.getIdVenta());
-                attachedVentaCollectionNew.add(ventaCollectionNewVentaToAttach);
+            List<Venta> attachedVentaListNew = new ArrayList<Venta>();
+            for (Venta ventaListNewVentaToAttach : ventaListNew) {
+                ventaListNewVentaToAttach = em.getReference(ventaListNewVentaToAttach.getClass(), ventaListNewVentaToAttach.getIdVenta());
+                attachedVentaListNew.add(ventaListNewVentaToAttach);
             }
-            ventaCollectionNew = attachedVentaCollectionNew;
-            usuario.setVentaCollection(ventaCollectionNew);
-            Collection<Apartado> attachedApartadoCollectionNew = new ArrayList<Apartado>();
-            for (Apartado apartadoCollectionNewApartadoToAttach : apartadoCollectionNew) {
-                apartadoCollectionNewApartadoToAttach = em.getReference(apartadoCollectionNewApartadoToAttach.getClass(), apartadoCollectionNewApartadoToAttach.getIdApartado());
-                attachedApartadoCollectionNew.add(apartadoCollectionNewApartadoToAttach);
+            ventaListNew = attachedVentaListNew;
+            usuario.setVentaList(ventaListNew);
+            List<Apartado> attachedApartadoListNew = new ArrayList<Apartado>();
+            for (Apartado apartadoListNewApartadoToAttach : apartadoListNew) {
+                apartadoListNewApartadoToAttach = em.getReference(apartadoListNewApartadoToAttach.getClass(), apartadoListNewApartadoToAttach.getIdApartado());
+                attachedApartadoListNew.add(apartadoListNewApartadoToAttach);
             }
-            apartadoCollectionNew = attachedApartadoCollectionNew;
-            usuario.setApartadoCollection(apartadoCollectionNew);
+            apartadoListNew = attachedApartadoListNew;
+            usuario.setApartadoList(apartadoListNew);
             usuario = em.merge(usuario);
             if (idTipoUsuarioOld != null && !idTipoUsuarioOld.equals(idTipoUsuarioNew)) {
-                idTipoUsuarioOld.getUsuarioCollection().remove(usuario);
+                idTipoUsuarioOld.getUsuarioList().remove(usuario);
                 idTipoUsuarioOld = em.merge(idTipoUsuarioOld);
             }
             if (idTipoUsuarioNew != null && !idTipoUsuarioNew.equals(idTipoUsuarioOld)) {
-                idTipoUsuarioNew.getUsuarioCollection().add(usuario);
+                idTipoUsuarioNew.getUsuarioList().add(usuario);
                 idTipoUsuarioNew = em.merge(idTipoUsuarioNew);
             }
-            for (Venta ventaCollectionNewVenta : ventaCollectionNew) {
-                if (!ventaCollectionOld.contains(ventaCollectionNewVenta)) {
-                    Usuario oldIdUsuarioOfVentaCollectionNewVenta = ventaCollectionNewVenta.getIdUsuario();
-                    ventaCollectionNewVenta.setIdUsuario(usuario);
-                    ventaCollectionNewVenta = em.merge(ventaCollectionNewVenta);
-                    if (oldIdUsuarioOfVentaCollectionNewVenta != null && !oldIdUsuarioOfVentaCollectionNewVenta.equals(usuario)) {
-                        oldIdUsuarioOfVentaCollectionNewVenta.getVentaCollection().remove(ventaCollectionNewVenta);
-                        oldIdUsuarioOfVentaCollectionNewVenta = em.merge(oldIdUsuarioOfVentaCollectionNewVenta);
+            for (Venta ventaListNewVenta : ventaListNew) {
+                if (!ventaListOld.contains(ventaListNewVenta)) {
+                    Usuario oldIdUsuarioOfVentaListNewVenta = ventaListNewVenta.getIdUsuario();
+                    ventaListNewVenta.setIdUsuario(usuario);
+                    ventaListNewVenta = em.merge(ventaListNewVenta);
+                    if (oldIdUsuarioOfVentaListNewVenta != null && !oldIdUsuarioOfVentaListNewVenta.equals(usuario)) {
+                        oldIdUsuarioOfVentaListNewVenta.getVentaList().remove(ventaListNewVenta);
+                        oldIdUsuarioOfVentaListNewVenta = em.merge(oldIdUsuarioOfVentaListNewVenta);
                     }
                 }
             }
-            for (Apartado apartadoCollectionNewApartado : apartadoCollectionNew) {
-                if (!apartadoCollectionOld.contains(apartadoCollectionNewApartado)) {
-                    Usuario oldIdUsuarioOfApartadoCollectionNewApartado = apartadoCollectionNewApartado.getIdUsuario();
-                    apartadoCollectionNewApartado.setIdUsuario(usuario);
-                    apartadoCollectionNewApartado = em.merge(apartadoCollectionNewApartado);
-                    if (oldIdUsuarioOfApartadoCollectionNewApartado != null && !oldIdUsuarioOfApartadoCollectionNewApartado.equals(usuario)) {
-                        oldIdUsuarioOfApartadoCollectionNewApartado.getApartadoCollection().remove(apartadoCollectionNewApartado);
-                        oldIdUsuarioOfApartadoCollectionNewApartado = em.merge(oldIdUsuarioOfApartadoCollectionNewApartado);
+            for (Apartado apartadoListNewApartado : apartadoListNew) {
+                if (!apartadoListOld.contains(apartadoListNewApartado)) {
+                    Usuario oldIdUsuarioOfApartadoListNewApartado = apartadoListNewApartado.getIdUsuario();
+                    apartadoListNewApartado.setIdUsuario(usuario);
+                    apartadoListNewApartado = em.merge(apartadoListNewApartado);
+                    if (oldIdUsuarioOfApartadoListNewApartado != null && !oldIdUsuarioOfApartadoListNewApartado.equals(usuario)) {
+                        oldIdUsuarioOfApartadoListNewApartado.getApartadoList().remove(apartadoListNewApartado);
+                        oldIdUsuarioOfApartadoListNewApartado = em.merge(oldIdUsuarioOfApartadoListNewApartado);
                     }
                 }
             }
@@ -209,26 +212,26 @@ public class UsuarioJpaController implements Serializable {
                 throw new NonexistentEntityException("The usuario with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<Venta> ventaCollectionOrphanCheck = usuario.getVentaCollection();
-            for (Venta ventaCollectionOrphanCheckVenta : ventaCollectionOrphanCheck) {
+            List<Venta> ventaListOrphanCheck = usuario.getVentaList();
+            for (Venta ventaListOrphanCheckVenta : ventaListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Usuario (" + usuario + ") cannot be destroyed since the Venta " + ventaCollectionOrphanCheckVenta + " in its ventaCollection field has a non-nullable idUsuario field.");
+                illegalOrphanMessages.add("This Usuario (" + usuario + ") cannot be destroyed since the Venta " + ventaListOrphanCheckVenta + " in its ventaList field has a non-nullable idUsuario field.");
             }
-            Collection<Apartado> apartadoCollectionOrphanCheck = usuario.getApartadoCollection();
-            for (Apartado apartadoCollectionOrphanCheckApartado : apartadoCollectionOrphanCheck) {
+            List<Apartado> apartadoListOrphanCheck = usuario.getApartadoList();
+            for (Apartado apartadoListOrphanCheckApartado : apartadoListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Usuario (" + usuario + ") cannot be destroyed since the Apartado " + apartadoCollectionOrphanCheckApartado + " in its apartadoCollection field has a non-nullable idUsuario field.");
+                illegalOrphanMessages.add("This Usuario (" + usuario + ") cannot be destroyed since the Apartado " + apartadoListOrphanCheckApartado + " in its apartadoList field has a non-nullable idUsuario field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
             TipoUsuario idTipoUsuario = usuario.getIdTipoUsuario();
             if (idTipoUsuario != null) {
-                idTipoUsuario.getUsuarioCollection().remove(usuario);
+                idTipoUsuario.getUsuarioList().remove(usuario);
                 idTipoUsuario = em.merge(idTipoUsuario);
             }
             em.remove(usuario);
@@ -285,5 +288,5 @@ public class UsuarioJpaController implements Serializable {
             em.close();
         }
     }
-
+    
 }

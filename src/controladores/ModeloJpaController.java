@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package controladores;
 
 import controladores.exceptions.IllegalOrphanException;
@@ -10,7 +15,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import objetosNegocio.Talla;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -19,7 +23,7 @@ import objetosNegocio.Modelo;
 
 /**
  *
- * @author Raul Karim Sabag Ballesteros
+ * @author zippy
  */
 public class ModeloJpaController implements Serializable {
 
@@ -33,27 +37,27 @@ public class ModeloJpaController implements Serializable {
     }
 
     public void create(Modelo modelo) throws PreexistingEntityException, Exception {
-        if (modelo.getTallaCollection() == null) {
-            modelo.setTallaCollection(new ArrayList<Talla>());
+        if (modelo.getTallaList() == null) {
+            modelo.setTallaList(new ArrayList<Talla>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<Talla> attachedTallaCollection = new ArrayList<Talla>();
-            for (Talla tallaCollectionTallaToAttach : modelo.getTallaCollection()) {
-                tallaCollectionTallaToAttach = em.getReference(tallaCollectionTallaToAttach.getClass(), tallaCollectionTallaToAttach.getIdTalla());
-                attachedTallaCollection.add(tallaCollectionTallaToAttach);
+            List<Talla> attachedTallaList = new ArrayList<Talla>();
+            for (Talla tallaListTallaToAttach : modelo.getTallaList()) {
+                tallaListTallaToAttach = em.getReference(tallaListTallaToAttach.getClass(), tallaListTallaToAttach.getIdTalla());
+                attachedTallaList.add(tallaListTallaToAttach);
             }
-            modelo.setTallaCollection(attachedTallaCollection);
+            modelo.setTallaList(attachedTallaList);
             em.persist(modelo);
-            for (Talla tallaCollectionTalla : modelo.getTallaCollection()) {
-                Modelo oldIdModeloOfTallaCollectionTalla = tallaCollectionTalla.getIdModelo();
-                tallaCollectionTalla.setIdModelo(modelo);
-                tallaCollectionTalla = em.merge(tallaCollectionTalla);
-                if (oldIdModeloOfTallaCollectionTalla != null) {
-                    oldIdModeloOfTallaCollectionTalla.getTallaCollection().remove(tallaCollectionTalla);
-                    oldIdModeloOfTallaCollectionTalla = em.merge(oldIdModeloOfTallaCollectionTalla);
+            for (Talla tallaListTalla : modelo.getTallaList()) {
+                Modelo oldIdModeloOfTallaListTalla = tallaListTalla.getIdModelo();
+                tallaListTalla.setIdModelo(modelo);
+                tallaListTalla = em.merge(tallaListTalla);
+                if (oldIdModeloOfTallaListTalla != null) {
+                    oldIdModeloOfTallaListTalla.getTallaList().remove(tallaListTalla);
+                    oldIdModeloOfTallaListTalla = em.merge(oldIdModeloOfTallaListTalla);
                 }
             }
             em.getTransaction().commit();
@@ -75,36 +79,36 @@ public class ModeloJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Modelo persistentModelo = em.find(Modelo.class, modelo.getIdModelo());
-            Collection<Talla> tallaCollectionOld = persistentModelo.getTallaCollection();
-            Collection<Talla> tallaCollectionNew = modelo.getTallaCollection();
+            List<Talla> tallaListOld = persistentModelo.getTallaList();
+            List<Talla> tallaListNew = modelo.getTallaList();
             List<String> illegalOrphanMessages = null;
-            for (Talla tallaCollectionOldTalla : tallaCollectionOld) {
-                if (!tallaCollectionNew.contains(tallaCollectionOldTalla)) {
+            for (Talla tallaListOldTalla : tallaListOld) {
+                if (!tallaListNew.contains(tallaListOldTalla)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Talla " + tallaCollectionOldTalla + " since its idModelo field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Talla " + tallaListOldTalla + " since its idModelo field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            Collection<Talla> attachedTallaCollectionNew = new ArrayList<Talla>();
-            for (Talla tallaCollectionNewTallaToAttach : tallaCollectionNew) {
-                tallaCollectionNewTallaToAttach = em.getReference(tallaCollectionNewTallaToAttach.getClass(), tallaCollectionNewTallaToAttach.getIdTalla());
-                attachedTallaCollectionNew.add(tallaCollectionNewTallaToAttach);
+            List<Talla> attachedTallaListNew = new ArrayList<Talla>();
+            for (Talla tallaListNewTallaToAttach : tallaListNew) {
+                tallaListNewTallaToAttach = em.getReference(tallaListNewTallaToAttach.getClass(), tallaListNewTallaToAttach.getIdTalla());
+                attachedTallaListNew.add(tallaListNewTallaToAttach);
             }
-            tallaCollectionNew = attachedTallaCollectionNew;
-            modelo.setTallaCollection(tallaCollectionNew);
+            tallaListNew = attachedTallaListNew;
+            modelo.setTallaList(tallaListNew);
             modelo = em.merge(modelo);
-            for (Talla tallaCollectionNewTalla : tallaCollectionNew) {
-                if (!tallaCollectionOld.contains(tallaCollectionNewTalla)) {
-                    Modelo oldIdModeloOfTallaCollectionNewTalla = tallaCollectionNewTalla.getIdModelo();
-                    tallaCollectionNewTalla.setIdModelo(modelo);
-                    tallaCollectionNewTalla = em.merge(tallaCollectionNewTalla);
-                    if (oldIdModeloOfTallaCollectionNewTalla != null && !oldIdModeloOfTallaCollectionNewTalla.equals(modelo)) {
-                        oldIdModeloOfTallaCollectionNewTalla.getTallaCollection().remove(tallaCollectionNewTalla);
-                        oldIdModeloOfTallaCollectionNewTalla = em.merge(oldIdModeloOfTallaCollectionNewTalla);
+            for (Talla tallaListNewTalla : tallaListNew) {
+                if (!tallaListOld.contains(tallaListNewTalla)) {
+                    Modelo oldIdModeloOfTallaListNewTalla = tallaListNewTalla.getIdModelo();
+                    tallaListNewTalla.setIdModelo(modelo);
+                    tallaListNewTalla = em.merge(tallaListNewTalla);
+                    if (oldIdModeloOfTallaListNewTalla != null && !oldIdModeloOfTallaListNewTalla.equals(modelo)) {
+                        oldIdModeloOfTallaListNewTalla.getTallaList().remove(tallaListNewTalla);
+                        oldIdModeloOfTallaListNewTalla = em.merge(oldIdModeloOfTallaListNewTalla);
                     }
                 }
             }
@@ -138,12 +142,12 @@ public class ModeloJpaController implements Serializable {
                 throw new NonexistentEntityException("The modelo with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<Talla> tallaCollectionOrphanCheck = modelo.getTallaCollection();
-            for (Talla tallaCollectionOrphanCheckTalla : tallaCollectionOrphanCheck) {
+            List<Talla> tallaListOrphanCheck = modelo.getTallaList();
+            for (Talla tallaListOrphanCheckTalla : tallaListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Modelo (" + modelo + ") cannot be destroyed since the Talla " + tallaCollectionOrphanCheckTalla + " in its tallaCollection field has a non-nullable idModelo field.");
+                illegalOrphanMessages.add("This Modelo (" + modelo + ") cannot be destroyed since the Talla " + tallaListOrphanCheckTalla + " in its tallaList field has a non-nullable idModelo field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
@@ -202,7 +206,7 @@ public class ModeloJpaController implements Serializable {
             em.close();
         }
     }
-
+    
     /**
      * Regresa un modelo el cual el nombre sera igual al nombre del modelo del
      * paramentro.
@@ -220,5 +224,4 @@ public class ModeloJpaController implements Serializable {
             return null;
         }
     }
-
 }

@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package controladores;
 
 import controladores.exceptions.IllegalOrphanException;
@@ -11,7 +16,6 @@ import javax.persistence.criteria.Root;
 import objetosNegocio.Modelo;
 import objetosNegocio.BajaDeInventario;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -22,7 +26,7 @@ import objetosNegocio.TallaApartado;
 
 /**
  *
- * @author Raul Karim Sabag Ballesteros
+ * @author zippy
  */
 public class TallaJpaController implements Serializable {
 
@@ -36,14 +40,14 @@ public class TallaJpaController implements Serializable {
     }
 
     public void create(Talla talla) throws PreexistingEntityException, Exception {
-        if (talla.getBajaDeInventarioCollection() == null) {
-            talla.setBajaDeInventarioCollection(new ArrayList<BajaDeInventario>());
+        if (talla.getBajadeinventarioList() == null) {
+            talla.setBajadeinventarioList(new ArrayList<BajaDeInventario>());
         }
-        if (talla.getVentaTallaCollection() == null) {
-            talla.setVentaTallaCollection(new ArrayList<VentaTalla>());
+        if (talla.getVentatallaList() == null) {
+            talla.setVentatallaList(new ArrayList<VentaTalla>());
         }
-        if (talla.getTallaApartadoCollection() == null) {
-            talla.setTallaApartadoCollection(new ArrayList<TallaApartado>());
+        if (talla.getTallaapartadoList() == null) {
+            talla.setTallaapartadoList(new ArrayList<TallaApartado>());
         }
         EntityManager em = null;
         try {
@@ -54,54 +58,54 @@ public class TallaJpaController implements Serializable {
                 idModelo = em.getReference(idModelo.getClass(), idModelo.getIdModelo());
                 talla.setIdModelo(idModelo);
             }
-            Collection<BajaDeInventario> attachedBajaDeInventarioCollection = new ArrayList<BajaDeInventario>();
-            for (BajaDeInventario bajaDeInventarioCollectionBajaDeInventarioToAttach : talla.getBajaDeInventarioCollection()) {
-                bajaDeInventarioCollectionBajaDeInventarioToAttach = em.getReference(bajaDeInventarioCollectionBajaDeInventarioToAttach.getClass(), bajaDeInventarioCollectionBajaDeInventarioToAttach.getIdBajaInventario());
-                attachedBajaDeInventarioCollection.add(bajaDeInventarioCollectionBajaDeInventarioToAttach);
+            List<BajaDeInventario> attachedBajadeinventarioList = new ArrayList<BajaDeInventario>();
+            for (BajaDeInventario bajadeinventarioListBajadeinventarioToAttach : talla.getBajadeinventarioList()) {
+                bajadeinventarioListBajadeinventarioToAttach = em.getReference(bajadeinventarioListBajadeinventarioToAttach.getClass(), bajadeinventarioListBajadeinventarioToAttach.getIdBajaInventario());
+                attachedBajadeinventarioList.add(bajadeinventarioListBajadeinventarioToAttach);
             }
-            talla.setBajaDeInventarioCollection(attachedBajaDeInventarioCollection);
-            Collection<VentaTalla> attachedVentaTallaCollection = new ArrayList<VentaTalla>();
-            for (VentaTalla ventaTallaCollectionVentaTallaToAttach : talla.getVentaTallaCollection()) {
-                ventaTallaCollectionVentaTallaToAttach = em.getReference(ventaTallaCollectionVentaTallaToAttach.getClass(), ventaTallaCollectionVentaTallaToAttach.getIdVentaTalla());
-                attachedVentaTallaCollection.add(ventaTallaCollectionVentaTallaToAttach);
+            talla.setBajadeinventarioList(attachedBajadeinventarioList);
+            List<VentaTalla> attachedVentatallaList = new ArrayList<VentaTalla>();
+            for (VentaTalla ventatallaListVentatallaToAttach : talla.getVentatallaList()) {
+                ventatallaListVentatallaToAttach = em.getReference(ventatallaListVentatallaToAttach.getClass(), ventatallaListVentatallaToAttach.getIdVentaTalla());
+                attachedVentatallaList.add(ventatallaListVentatallaToAttach);
             }
-            talla.setVentaTallaCollection(attachedVentaTallaCollection);
-            Collection<TallaApartado> attachedTallaApartadoCollection = new ArrayList<TallaApartado>();
-            for (TallaApartado tallaApartadoCollectionTallaApartadoToAttach : talla.getTallaApartadoCollection()) {
-                tallaApartadoCollectionTallaApartadoToAttach = em.getReference(tallaApartadoCollectionTallaApartadoToAttach.getClass(), tallaApartadoCollectionTallaApartadoToAttach.getIdTallaApartado());
-                attachedTallaApartadoCollection.add(tallaApartadoCollectionTallaApartadoToAttach);
+            talla.setVentatallaList(attachedVentatallaList);
+            List<TallaApartado> attachedTallaapartadoList = new ArrayList<TallaApartado>();
+            for (TallaApartado tallaapartadoListTallaapartadoToAttach : talla.getTallaapartadoList()) {
+                tallaapartadoListTallaapartadoToAttach = em.getReference(tallaapartadoListTallaapartadoToAttach.getClass(), tallaapartadoListTallaapartadoToAttach.getIdTallaApartado());
+                attachedTallaapartadoList.add(tallaapartadoListTallaapartadoToAttach);
             }
-            talla.setTallaApartadoCollection(attachedTallaApartadoCollection);
+            talla.setTallaapartadoList(attachedTallaapartadoList);
             em.persist(talla);
             if (idModelo != null) {
-                idModelo.getTallaCollection().add(talla);
+                idModelo.getTallaList().add(talla);
                 idModelo = em.merge(idModelo);
             }
-            for (BajaDeInventario bajaDeInventarioCollectionBajaDeInventario : talla.getBajaDeInventarioCollection()) {
-                Talla oldIdTallaOfBajaDeInventarioCollectionBajaDeInventario = bajaDeInventarioCollectionBajaDeInventario.getIdTalla();
-                bajaDeInventarioCollectionBajaDeInventario.setIdTalla(talla);
-                bajaDeInventarioCollectionBajaDeInventario = em.merge(bajaDeInventarioCollectionBajaDeInventario);
-                if (oldIdTallaOfBajaDeInventarioCollectionBajaDeInventario != null) {
-                    oldIdTallaOfBajaDeInventarioCollectionBajaDeInventario.getBajaDeInventarioCollection().remove(bajaDeInventarioCollectionBajaDeInventario);
-                    oldIdTallaOfBajaDeInventarioCollectionBajaDeInventario = em.merge(oldIdTallaOfBajaDeInventarioCollectionBajaDeInventario);
+            for (BajaDeInventario bajadeinventarioListBajadeinventario : talla.getBajadeinventarioList()) {
+                Talla oldIdTallaOfBajadeinventarioListBajadeinventario = bajadeinventarioListBajadeinventario.getIdTalla();
+                bajadeinventarioListBajadeinventario.setIdTalla(talla);
+                bajadeinventarioListBajadeinventario = em.merge(bajadeinventarioListBajadeinventario);
+                if (oldIdTallaOfBajadeinventarioListBajadeinventario != null) {
+                    oldIdTallaOfBajadeinventarioListBajadeinventario.getBajadeinventarioList().remove(bajadeinventarioListBajadeinventario);
+                    oldIdTallaOfBajadeinventarioListBajadeinventario = em.merge(oldIdTallaOfBajadeinventarioListBajadeinventario);
                 }
             }
-            for (VentaTalla ventaTallaCollectionVentaTalla : talla.getVentaTallaCollection()) {
-                Talla oldIdTallaOfVentaTallaCollectionVentaTalla = ventaTallaCollectionVentaTalla.getIdTalla();
-                ventaTallaCollectionVentaTalla.setIdTalla(talla);
-                ventaTallaCollectionVentaTalla = em.merge(ventaTallaCollectionVentaTalla);
-                if (oldIdTallaOfVentaTallaCollectionVentaTalla != null) {
-                    oldIdTallaOfVentaTallaCollectionVentaTalla.getVentaTallaCollection().remove(ventaTallaCollectionVentaTalla);
-                    oldIdTallaOfVentaTallaCollectionVentaTalla = em.merge(oldIdTallaOfVentaTallaCollectionVentaTalla);
+            for (VentaTalla ventatallaListVentatalla : talla.getVentatallaList()) {
+                Talla oldIdTallaOfVentatallaListVentatalla = ventatallaListVentatalla.getIdTalla();
+                ventatallaListVentatalla.setIdTalla(talla);
+                ventatallaListVentatalla = em.merge(ventatallaListVentatalla);
+                if (oldIdTallaOfVentatallaListVentatalla != null) {
+                    oldIdTallaOfVentatallaListVentatalla.getVentatallaList().remove(ventatallaListVentatalla);
+                    oldIdTallaOfVentatallaListVentatalla = em.merge(oldIdTallaOfVentatallaListVentatalla);
                 }
             }
-            for (TallaApartado tallaApartadoCollectionTallaApartado : talla.getTallaApartadoCollection()) {
-                Talla oldIdTallaOfTallaApartadoCollectionTallaApartado = tallaApartadoCollectionTallaApartado.getIdTalla();
-                tallaApartadoCollectionTallaApartado.setIdTalla(talla);
-                tallaApartadoCollectionTallaApartado = em.merge(tallaApartadoCollectionTallaApartado);
-                if (oldIdTallaOfTallaApartadoCollectionTallaApartado != null) {
-                    oldIdTallaOfTallaApartadoCollectionTallaApartado.getTallaApartadoCollection().remove(tallaApartadoCollectionTallaApartado);
-                    oldIdTallaOfTallaApartadoCollectionTallaApartado = em.merge(oldIdTallaOfTallaApartadoCollectionTallaApartado);
+            for (TallaApartado tallaapartadoListTallaapartado : talla.getTallaapartadoList()) {
+                Talla oldIdTallaOfTallaapartadoListTallaapartado = tallaapartadoListTallaapartado.getIdTalla();
+                tallaapartadoListTallaapartado.setIdTalla(talla);
+                tallaapartadoListTallaapartado = em.merge(tallaapartadoListTallaapartado);
+                if (oldIdTallaOfTallaapartadoListTallaapartado != null) {
+                    oldIdTallaOfTallaapartadoListTallaapartado.getTallaapartadoList().remove(tallaapartadoListTallaapartado);
+                    oldIdTallaOfTallaapartadoListTallaapartado = em.merge(oldIdTallaOfTallaapartadoListTallaapartado);
                 }
             }
             em.getTransaction().commit();
@@ -125,35 +129,35 @@ public class TallaJpaController implements Serializable {
             Talla persistentTalla = em.find(Talla.class, talla.getIdTalla());
             Modelo idModeloOld = persistentTalla.getIdModelo();
             Modelo idModeloNew = talla.getIdModelo();
-            Collection<BajaDeInventario> bajaDeInventarioCollectionOld = persistentTalla.getBajaDeInventarioCollection();
-            Collection<BajaDeInventario> bajaDeInventarioCollectionNew = talla.getBajaDeInventarioCollection();
-            Collection<VentaTalla> ventaTallaCollectionOld = persistentTalla.getVentaTallaCollection();
-            Collection<VentaTalla> ventaTallaCollectionNew = talla.getVentaTallaCollection();
-            Collection<TallaApartado> tallaApartadoCollectionOld = persistentTalla.getTallaApartadoCollection();
-            Collection<TallaApartado> tallaApartadoCollectionNew = talla.getTallaApartadoCollection();
+            List<BajaDeInventario> bajadeinventarioListOld = persistentTalla.getBajadeinventarioList();
+            List<BajaDeInventario> bajadeinventarioListNew = talla.getBajadeinventarioList();
+            List<VentaTalla> ventatallaListOld = persistentTalla.getVentatallaList();
+            List<VentaTalla> ventatallaListNew = talla.getVentatallaList();
+            List<TallaApartado> tallaapartadoListOld = persistentTalla.getTallaapartadoList();
+            List<TallaApartado> tallaapartadoListNew = talla.getTallaapartadoList();
             List<String> illegalOrphanMessages = null;
-            for (BajaDeInventario bajaDeInventarioCollectionOldBajaDeInventario : bajaDeInventarioCollectionOld) {
-                if (!bajaDeInventarioCollectionNew.contains(bajaDeInventarioCollectionOldBajaDeInventario)) {
+            for (BajaDeInventario bajadeinventarioListOldBajadeinventario : bajadeinventarioListOld) {
+                if (!bajadeinventarioListNew.contains(bajadeinventarioListOldBajadeinventario)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain BajaDeInventario " + bajaDeInventarioCollectionOldBajaDeInventario + " since its idTalla field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Bajadeinventario " + bajadeinventarioListOldBajadeinventario + " since its idTalla field is not nullable.");
                 }
             }
-            for (VentaTalla ventaTallaCollectionOldVentaTalla : ventaTallaCollectionOld) {
-                if (!ventaTallaCollectionNew.contains(ventaTallaCollectionOldVentaTalla)) {
+            for (VentaTalla ventatallaListOldVentatalla : ventatallaListOld) {
+                if (!ventatallaListNew.contains(ventatallaListOldVentatalla)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain VentaTalla " + ventaTallaCollectionOldVentaTalla + " since its idTalla field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Ventatalla " + ventatallaListOldVentatalla + " since its idTalla field is not nullable.");
                 }
             }
-            for (TallaApartado tallaApartadoCollectionOldTallaApartado : tallaApartadoCollectionOld) {
-                if (!tallaApartadoCollectionNew.contains(tallaApartadoCollectionOldTallaApartado)) {
+            for (TallaApartado tallaapartadoListOldTallaapartado : tallaapartadoListOld) {
+                if (!tallaapartadoListNew.contains(tallaapartadoListOldTallaapartado)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain TallaApartado " + tallaApartadoCollectionOldTallaApartado + " since its idTalla field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Tallaapartado " + tallaapartadoListOldTallaapartado + " since its idTalla field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -163,66 +167,66 @@ public class TallaJpaController implements Serializable {
                 idModeloNew = em.getReference(idModeloNew.getClass(), idModeloNew.getIdModelo());
                 talla.setIdModelo(idModeloNew);
             }
-            Collection<BajaDeInventario> attachedBajaDeInventarioCollectionNew = new ArrayList<BajaDeInventario>();
-            for (BajaDeInventario bajaDeInventarioCollectionNewBajaDeInventarioToAttach : bajaDeInventarioCollectionNew) {
-                bajaDeInventarioCollectionNewBajaDeInventarioToAttach = em.getReference(bajaDeInventarioCollectionNewBajaDeInventarioToAttach.getClass(), bajaDeInventarioCollectionNewBajaDeInventarioToAttach.getIdBajaInventario());
-                attachedBajaDeInventarioCollectionNew.add(bajaDeInventarioCollectionNewBajaDeInventarioToAttach);
+            List<BajaDeInventario> attachedBajadeinventarioListNew = new ArrayList<BajaDeInventario>();
+            for (BajaDeInventario bajadeinventarioListNewBajadeinventarioToAttach : bajadeinventarioListNew) {
+                bajadeinventarioListNewBajadeinventarioToAttach = em.getReference(bajadeinventarioListNewBajadeinventarioToAttach.getClass(), bajadeinventarioListNewBajadeinventarioToAttach.getIdBajaInventario());
+                attachedBajadeinventarioListNew.add(bajadeinventarioListNewBajadeinventarioToAttach);
             }
-            bajaDeInventarioCollectionNew = attachedBajaDeInventarioCollectionNew;
-            talla.setBajaDeInventarioCollection(bajaDeInventarioCollectionNew);
-            Collection<VentaTalla> attachedVentaTallaCollectionNew = new ArrayList<VentaTalla>();
-            for (VentaTalla ventaTallaCollectionNewVentaTallaToAttach : ventaTallaCollectionNew) {
-                ventaTallaCollectionNewVentaTallaToAttach = em.getReference(ventaTallaCollectionNewVentaTallaToAttach.getClass(), ventaTallaCollectionNewVentaTallaToAttach.getIdVentaTalla());
-                attachedVentaTallaCollectionNew.add(ventaTallaCollectionNewVentaTallaToAttach);
+            bajadeinventarioListNew = attachedBajadeinventarioListNew;
+            talla.setBajadeinventarioList(bajadeinventarioListNew);
+            List<VentaTalla> attachedVentatallaListNew = new ArrayList<VentaTalla>();
+            for (VentaTalla ventatallaListNewVentatallaToAttach : ventatallaListNew) {
+                ventatallaListNewVentatallaToAttach = em.getReference(ventatallaListNewVentatallaToAttach.getClass(), ventatallaListNewVentatallaToAttach.getIdVentaTalla());
+                attachedVentatallaListNew.add(ventatallaListNewVentatallaToAttach);
             }
-            ventaTallaCollectionNew = attachedVentaTallaCollectionNew;
-            talla.setVentaTallaCollection(ventaTallaCollectionNew);
-            Collection<TallaApartado> attachedTallaApartadoCollectionNew = new ArrayList<TallaApartado>();
-            for (TallaApartado tallaApartadoCollectionNewTallaApartadoToAttach : tallaApartadoCollectionNew) {
-                tallaApartadoCollectionNewTallaApartadoToAttach = em.getReference(tallaApartadoCollectionNewTallaApartadoToAttach.getClass(), tallaApartadoCollectionNewTallaApartadoToAttach.getIdTallaApartado());
-                attachedTallaApartadoCollectionNew.add(tallaApartadoCollectionNewTallaApartadoToAttach);
+            ventatallaListNew = attachedVentatallaListNew;
+            talla.setVentatallaList(ventatallaListNew);
+            List<TallaApartado> attachedTallaapartadoListNew = new ArrayList<TallaApartado>();
+            for (TallaApartado tallaapartadoListNewTallaapartadoToAttach : tallaapartadoListNew) {
+                tallaapartadoListNewTallaapartadoToAttach = em.getReference(tallaapartadoListNewTallaapartadoToAttach.getClass(), tallaapartadoListNewTallaapartadoToAttach.getIdTallaApartado());
+                attachedTallaapartadoListNew.add(tallaapartadoListNewTallaapartadoToAttach);
             }
-            tallaApartadoCollectionNew = attachedTallaApartadoCollectionNew;
-            talla.setTallaApartadoCollection(tallaApartadoCollectionNew);
+            tallaapartadoListNew = attachedTallaapartadoListNew;
+            talla.setTallaapartadoList(tallaapartadoListNew);
             talla = em.merge(talla);
             if (idModeloOld != null && !idModeloOld.equals(idModeloNew)) {
-                idModeloOld.getTallaCollection().remove(talla);
+                idModeloOld.getTallaList().remove(talla);
                 idModeloOld = em.merge(idModeloOld);
             }
             if (idModeloNew != null && !idModeloNew.equals(idModeloOld)) {
-                idModeloNew.getTallaCollection().add(talla);
+                idModeloNew.getTallaList().add(talla);
                 idModeloNew = em.merge(idModeloNew);
             }
-            for (BajaDeInventario bajaDeInventarioCollectionNewBajaDeInventario : bajaDeInventarioCollectionNew) {
-                if (!bajaDeInventarioCollectionOld.contains(bajaDeInventarioCollectionNewBajaDeInventario)) {
-                    Talla oldIdTallaOfBajaDeInventarioCollectionNewBajaDeInventario = bajaDeInventarioCollectionNewBajaDeInventario.getIdTalla();
-                    bajaDeInventarioCollectionNewBajaDeInventario.setIdTalla(talla);
-                    bajaDeInventarioCollectionNewBajaDeInventario = em.merge(bajaDeInventarioCollectionNewBajaDeInventario);
-                    if (oldIdTallaOfBajaDeInventarioCollectionNewBajaDeInventario != null && !oldIdTallaOfBajaDeInventarioCollectionNewBajaDeInventario.equals(talla)) {
-                        oldIdTallaOfBajaDeInventarioCollectionNewBajaDeInventario.getBajaDeInventarioCollection().remove(bajaDeInventarioCollectionNewBajaDeInventario);
-                        oldIdTallaOfBajaDeInventarioCollectionNewBajaDeInventario = em.merge(oldIdTallaOfBajaDeInventarioCollectionNewBajaDeInventario);
+            for (BajaDeInventario bajadeinventarioListNewBajadeinventario : bajadeinventarioListNew) {
+                if (!bajadeinventarioListOld.contains(bajadeinventarioListNewBajadeinventario)) {
+                    Talla oldIdTallaOfBajadeinventarioListNewBajadeinventario = bajadeinventarioListNewBajadeinventario.getIdTalla();
+                    bajadeinventarioListNewBajadeinventario.setIdTalla(talla);
+                    bajadeinventarioListNewBajadeinventario = em.merge(bajadeinventarioListNewBajadeinventario);
+                    if (oldIdTallaOfBajadeinventarioListNewBajadeinventario != null && !oldIdTallaOfBajadeinventarioListNewBajadeinventario.equals(talla)) {
+                        oldIdTallaOfBajadeinventarioListNewBajadeinventario.getBajadeinventarioList().remove(bajadeinventarioListNewBajadeinventario);
+                        oldIdTallaOfBajadeinventarioListNewBajadeinventario = em.merge(oldIdTallaOfBajadeinventarioListNewBajadeinventario);
                     }
                 }
             }
-            for (VentaTalla ventaTallaCollectionNewVentaTalla : ventaTallaCollectionNew) {
-                if (!ventaTallaCollectionOld.contains(ventaTallaCollectionNewVentaTalla)) {
-                    Talla oldIdTallaOfVentaTallaCollectionNewVentaTalla = ventaTallaCollectionNewVentaTalla.getIdTalla();
-                    ventaTallaCollectionNewVentaTalla.setIdTalla(talla);
-                    ventaTallaCollectionNewVentaTalla = em.merge(ventaTallaCollectionNewVentaTalla);
-                    if (oldIdTallaOfVentaTallaCollectionNewVentaTalla != null && !oldIdTallaOfVentaTallaCollectionNewVentaTalla.equals(talla)) {
-                        oldIdTallaOfVentaTallaCollectionNewVentaTalla.getVentaTallaCollection().remove(ventaTallaCollectionNewVentaTalla);
-                        oldIdTallaOfVentaTallaCollectionNewVentaTalla = em.merge(oldIdTallaOfVentaTallaCollectionNewVentaTalla);
+            for (VentaTalla ventatallaListNewVentatalla : ventatallaListNew) {
+                if (!ventatallaListOld.contains(ventatallaListNewVentatalla)) {
+                    Talla oldIdTallaOfVentatallaListNewVentatalla = ventatallaListNewVentatalla.getIdTalla();
+                    ventatallaListNewVentatalla.setIdTalla(talla);
+                    ventatallaListNewVentatalla = em.merge(ventatallaListNewVentatalla);
+                    if (oldIdTallaOfVentatallaListNewVentatalla != null && !oldIdTallaOfVentatallaListNewVentatalla.equals(talla)) {
+                        oldIdTallaOfVentatallaListNewVentatalla.getVentatallaList().remove(ventatallaListNewVentatalla);
+                        oldIdTallaOfVentatallaListNewVentatalla = em.merge(oldIdTallaOfVentatallaListNewVentatalla);
                     }
                 }
             }
-            for (TallaApartado tallaApartadoCollectionNewTallaApartado : tallaApartadoCollectionNew) {
-                if (!tallaApartadoCollectionOld.contains(tallaApartadoCollectionNewTallaApartado)) {
-                    Talla oldIdTallaOfTallaApartadoCollectionNewTallaApartado = tallaApartadoCollectionNewTallaApartado.getIdTalla();
-                    tallaApartadoCollectionNewTallaApartado.setIdTalla(talla);
-                    tallaApartadoCollectionNewTallaApartado = em.merge(tallaApartadoCollectionNewTallaApartado);
-                    if (oldIdTallaOfTallaApartadoCollectionNewTallaApartado != null && !oldIdTallaOfTallaApartadoCollectionNewTallaApartado.equals(talla)) {
-                        oldIdTallaOfTallaApartadoCollectionNewTallaApartado.getTallaApartadoCollection().remove(tallaApartadoCollectionNewTallaApartado);
-                        oldIdTallaOfTallaApartadoCollectionNewTallaApartado = em.merge(oldIdTallaOfTallaApartadoCollectionNewTallaApartado);
+            for (TallaApartado tallaapartadoListNewTallaapartado : tallaapartadoListNew) {
+                if (!tallaapartadoListOld.contains(tallaapartadoListNewTallaapartado)) {
+                    Talla oldIdTallaOfTallaapartadoListNewTallaapartado = tallaapartadoListNewTallaapartado.getIdTalla();
+                    tallaapartadoListNewTallaapartado.setIdTalla(talla);
+                    tallaapartadoListNewTallaapartado = em.merge(tallaapartadoListNewTallaapartado);
+                    if (oldIdTallaOfTallaapartadoListNewTallaapartado != null && !oldIdTallaOfTallaapartadoListNewTallaapartado.equals(talla)) {
+                        oldIdTallaOfTallaapartadoListNewTallaapartado.getTallaapartadoList().remove(tallaapartadoListNewTallaapartado);
+                        oldIdTallaOfTallaapartadoListNewTallaapartado = em.merge(oldIdTallaOfTallaapartadoListNewTallaapartado);
                     }
                 }
             }
@@ -256,33 +260,33 @@ public class TallaJpaController implements Serializable {
                 throw new NonexistentEntityException("The talla with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<BajaDeInventario> bajaDeInventarioCollectionOrphanCheck = talla.getBajaDeInventarioCollection();
-            for (BajaDeInventario bajaDeInventarioCollectionOrphanCheckBajaDeInventario : bajaDeInventarioCollectionOrphanCheck) {
+            List<BajaDeInventario> bajadeinventarioListOrphanCheck = talla.getBajadeinventarioList();
+            for (BajaDeInventario bajadeinventarioListOrphanCheckBajadeinventario : bajadeinventarioListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Talla (" + talla + ") cannot be destroyed since the BajaDeInventario " + bajaDeInventarioCollectionOrphanCheckBajaDeInventario + " in its bajaDeInventarioCollection field has a non-nullable idTalla field.");
+                illegalOrphanMessages.add("This Talla (" + talla + ") cannot be destroyed since the Bajadeinventario " + bajadeinventarioListOrphanCheckBajadeinventario + " in its bajadeinventarioList field has a non-nullable idTalla field.");
             }
-            Collection<VentaTalla> ventaTallaCollectionOrphanCheck = talla.getVentaTallaCollection();
-            for (VentaTalla ventaTallaCollectionOrphanCheckVentaTalla : ventaTallaCollectionOrphanCheck) {
+            List<VentaTalla> ventatallaListOrphanCheck = talla.getVentatallaList();
+            for (VentaTalla ventatallaListOrphanCheckVentatalla : ventatallaListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Talla (" + talla + ") cannot be destroyed since the VentaTalla " + ventaTallaCollectionOrphanCheckVentaTalla + " in its ventaTallaCollection field has a non-nullable idTalla field.");
+                illegalOrphanMessages.add("This Talla (" + talla + ") cannot be destroyed since the Ventatalla " + ventatallaListOrphanCheckVentatalla + " in its ventatallaList field has a non-nullable idTalla field.");
             }
-            Collection<TallaApartado> tallaApartadoCollectionOrphanCheck = talla.getTallaApartadoCollection();
-            for (TallaApartado tallaApartadoCollectionOrphanCheckTallaApartado : tallaApartadoCollectionOrphanCheck) {
+            List<TallaApartado> tallaapartadoListOrphanCheck = talla.getTallaapartadoList();
+            for (TallaApartado tallaapartadoListOrphanCheckTallaapartado : tallaapartadoListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Talla (" + talla + ") cannot be destroyed since the TallaApartado " + tallaApartadoCollectionOrphanCheckTallaApartado + " in its tallaApartadoCollection field has a non-nullable idTalla field.");
+                illegalOrphanMessages.add("This Talla (" + talla + ") cannot be destroyed since the Tallaapartado " + tallaapartadoListOrphanCheckTallaapartado + " in its tallaapartadoList field has a non-nullable idTalla field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
             Modelo idModelo = talla.getIdModelo();
             if (idModelo != null) {
-                idModelo.getTallaCollection().remove(talla);
+                idModelo.getTallaList().remove(talla);
                 idModelo = em.merge(idModelo);
             }
             em.remove(talla);
@@ -339,8 +343,8 @@ public class TallaJpaController implements Serializable {
             em.close();
         }
     }
-
-    /**
+    
+        /**
      * Este metodo recibe una talla, toma el atributo talla del objeto y lo
      * compara contra las tallas de la base de datos. Si una talla es igual,
      * toma la talla de la base de datos y la regresa.
@@ -378,5 +382,5 @@ public class TallaJpaController implements Serializable {
             return null;
         }
     }
-
+    
 }

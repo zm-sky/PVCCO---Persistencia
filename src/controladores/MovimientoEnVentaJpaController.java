@@ -1,4 +1,8 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package controladores;
 
 import controladores.exceptions.NonexistentEntityException;
@@ -16,7 +20,7 @@ import objetosNegocio.Venta;
 
 /**
  *
- * @author Raul Karim Sabag Ballesteros
+ * @author zippy
  */
 public class MovimientoEnVentaJpaController implements Serializable {
 
@@ -29,25 +33,25 @@ public class MovimientoEnVentaJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(MovimientoEnVenta movimientoEnVenta) throws PreexistingEntityException, Exception {
+    public void create(MovimientoEnVenta movimientoenventa) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Venta idVenta = movimientoEnVenta.getIdVenta();
+            Venta idVenta = movimientoenventa.getIdVenta();
             if (idVenta != null) {
                 idVenta = em.getReference(idVenta.getClass(), idVenta.getIdVenta());
-                movimientoEnVenta.setIdVenta(idVenta);
+                movimientoenventa.setIdVenta(idVenta);
             }
-            em.persist(movimientoEnVenta);
+            em.persist(movimientoenventa);
             if (idVenta != null) {
-                idVenta.getMovimientoEnVentaCollection().add(movimientoEnVenta);
+                idVenta.getMovimientoenventaList().add(movimientoenventa);
                 idVenta = em.merge(idVenta);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findMovimientoEnVenta(movimientoEnVenta.getIdMovimientoVenta()) != null) {
-                throw new PreexistingEntityException("MovimientoEnVenta " + movimientoEnVenta + " already exists.", ex);
+            if (findMovimientoenventa(movimientoenventa.getIdMovimientoVenta()) != null) {
+                throw new PreexistingEntityException("Movimientoenventa " + movimientoenventa + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -57,34 +61,34 @@ public class MovimientoEnVentaJpaController implements Serializable {
         }
     }
 
-    public void edit(MovimientoEnVenta movimientoEnVenta) throws NonexistentEntityException, Exception {
+    public void edit(MovimientoEnVenta movimientoenventa) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            MovimientoEnVenta persistentMovimientoEnVenta = em.find(MovimientoEnVenta.class, movimientoEnVenta.getIdMovimientoVenta());
-            Venta idVentaOld = persistentMovimientoEnVenta.getIdVenta();
-            Venta idVentaNew = movimientoEnVenta.getIdVenta();
+            MovimientoEnVenta persistentMovimientoenventa = em.find(MovimientoEnVenta.class, movimientoenventa.getIdMovimientoVenta());
+            Venta idVentaOld = persistentMovimientoenventa.getIdVenta();
+            Venta idVentaNew = movimientoenventa.getIdVenta();
             if (idVentaNew != null) {
                 idVentaNew = em.getReference(idVentaNew.getClass(), idVentaNew.getIdVenta());
-                movimientoEnVenta.setIdVenta(idVentaNew);
+                movimientoenventa.setIdVenta(idVentaNew);
             }
-            movimientoEnVenta = em.merge(movimientoEnVenta);
+            movimientoenventa = em.merge(movimientoenventa);
             if (idVentaOld != null && !idVentaOld.equals(idVentaNew)) {
-                idVentaOld.getMovimientoEnVentaCollection().remove(movimientoEnVenta);
+                idVentaOld.getMovimientoenventaList().remove(movimientoenventa);
                 idVentaOld = em.merge(idVentaOld);
             }
             if (idVentaNew != null && !idVentaNew.equals(idVentaOld)) {
-                idVentaNew.getMovimientoEnVentaCollection().add(movimientoEnVenta);
+                idVentaNew.getMovimientoenventaList().add(movimientoenventa);
                 idVentaNew = em.merge(idVentaNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                String id = movimientoEnVenta.getIdMovimientoVenta();
-                if (findMovimientoEnVenta(id) == null) {
-                    throw new NonexistentEntityException("The movimientoEnVenta with id " + id + " no longer exists.");
+                String id = movimientoenventa.getIdMovimientoVenta();
+                if (findMovimientoenventa(id) == null) {
+                    throw new NonexistentEntityException("The movimientoenventa with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -100,19 +104,19 @@ public class MovimientoEnVentaJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            MovimientoEnVenta movimientoEnVenta;
+            MovimientoEnVenta movimientoenventa;
             try {
-                movimientoEnVenta = em.getReference(MovimientoEnVenta.class, id);
-                movimientoEnVenta.getIdMovimientoVenta();
+                movimientoenventa = em.getReference(MovimientoEnVenta.class, id);
+                movimientoenventa.getIdMovimientoVenta();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The movimientoEnVenta with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The movimientoenventa with id " + id + " no longer exists.", enfe);
             }
-            Venta idVenta = movimientoEnVenta.getIdVenta();
+            Venta idVenta = movimientoenventa.getIdVenta();
             if (idVenta != null) {
-                idVenta.getMovimientoEnVentaCollection().remove(movimientoEnVenta);
+                idVenta.getMovimientoenventaList().remove(movimientoenventa);
                 idVenta = em.merge(idVenta);
             }
-            em.remove(movimientoEnVenta);
+            em.remove(movimientoenventa);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -121,15 +125,15 @@ public class MovimientoEnVentaJpaController implements Serializable {
         }
     }
 
-    public List<MovimientoEnVenta> findMovimientoEnVentaEntities() {
-        return findMovimientoEnVentaEntities(true, -1, -1);
+    public List<MovimientoEnVenta> findMovimientoenventaEntities() {
+        return findMovimientoenventaEntities(true, -1, -1);
     }
 
-    public List<MovimientoEnVenta> findMovimientoEnVentaEntities(int maxResults, int firstResult) {
-        return findMovimientoEnVentaEntities(false, maxResults, firstResult);
+    public List<MovimientoEnVenta> findMovimientoenventaEntities(int maxResults, int firstResult) {
+        return findMovimientoenventaEntities(false, maxResults, firstResult);
     }
 
-    private List<MovimientoEnVenta> findMovimientoEnVentaEntities(boolean all, int maxResults, int firstResult) {
+    private List<MovimientoEnVenta> findMovimientoenventaEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
@@ -145,7 +149,7 @@ public class MovimientoEnVentaJpaController implements Serializable {
         }
     }
 
-    public MovimientoEnVenta findMovimientoEnVenta(String id) {
+    public MovimientoEnVenta findMovimientoenventa(String id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(MovimientoEnVenta.class, id);
@@ -154,7 +158,7 @@ public class MovimientoEnVentaJpaController implements Serializable {
         }
     }
 
-    public int getMovimientoEnVentaCount() {
+    public int getMovimientoenventaCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
@@ -166,5 +170,5 @@ public class MovimientoEnVentaJpaController implements Serializable {
             em.close();
         }
     }
-
+    
 }

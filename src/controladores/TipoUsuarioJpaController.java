@@ -1,4 +1,8 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package controladores;
 
 import controladores.exceptions.IllegalOrphanException;
@@ -11,7 +15,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import objetosNegocio.Usuario;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -19,7 +22,7 @@ import objetosNegocio.TipoUsuario;
 
 /**
  *
- * @author Raul Karim Sabag Ballesteros
+ * @author zippy
  */
 public class TipoUsuarioJpaController implements Serializable {
 
@@ -32,34 +35,34 @@ public class TipoUsuarioJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(TipoUsuario tipoUsuario) throws PreexistingEntityException, Exception {
-        if (tipoUsuario.getUsuarioCollection() == null) {
-            tipoUsuario.setUsuarioCollection(new ArrayList<Usuario>());
+    public void create(TipoUsuario tipousuario) throws PreexistingEntityException, Exception {
+        if (tipousuario.getUsuarioList() == null) {
+            tipousuario.setUsuarioList(new ArrayList<Usuario>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<Usuario> attachedUsuarioCollection = new ArrayList<Usuario>();
-            for (Usuario usuarioCollectionUsuarioToAttach : tipoUsuario.getUsuarioCollection()) {
-                usuarioCollectionUsuarioToAttach = em.getReference(usuarioCollectionUsuarioToAttach.getClass(), usuarioCollectionUsuarioToAttach.getIdUsuario());
-                attachedUsuarioCollection.add(usuarioCollectionUsuarioToAttach);
+            List<Usuario> attachedUsuarioList = new ArrayList<Usuario>();
+            for (Usuario usuarioListUsuarioToAttach : tipousuario.getUsuarioList()) {
+                usuarioListUsuarioToAttach = em.getReference(usuarioListUsuarioToAttach.getClass(), usuarioListUsuarioToAttach.getIdUsuario());
+                attachedUsuarioList.add(usuarioListUsuarioToAttach);
             }
-            tipoUsuario.setUsuarioCollection(attachedUsuarioCollection);
-            em.persist(tipoUsuario);
-            for (Usuario usuarioCollectionUsuario : tipoUsuario.getUsuarioCollection()) {
-                TipoUsuario oldIdTipoUsuarioOfUsuarioCollectionUsuario = usuarioCollectionUsuario.getIdTipoUsuario();
-                usuarioCollectionUsuario.setIdTipoUsuario(tipoUsuario);
-                usuarioCollectionUsuario = em.merge(usuarioCollectionUsuario);
-                if (oldIdTipoUsuarioOfUsuarioCollectionUsuario != null) {
-                    oldIdTipoUsuarioOfUsuarioCollectionUsuario.getUsuarioCollection().remove(usuarioCollectionUsuario);
-                    oldIdTipoUsuarioOfUsuarioCollectionUsuario = em.merge(oldIdTipoUsuarioOfUsuarioCollectionUsuario);
+            tipousuario.setUsuarioList(attachedUsuarioList);
+            em.persist(tipousuario);
+            for (Usuario usuarioListUsuario : tipousuario.getUsuarioList()) {
+                TipoUsuario oldIdTipoUsuarioOfUsuarioListUsuario = usuarioListUsuario.getIdTipoUsuario();
+                usuarioListUsuario.setIdTipoUsuario(tipousuario);
+                usuarioListUsuario = em.merge(usuarioListUsuario);
+                if (oldIdTipoUsuarioOfUsuarioListUsuario != null) {
+                    oldIdTipoUsuarioOfUsuarioListUsuario.getUsuarioList().remove(usuarioListUsuario);
+                    oldIdTipoUsuarioOfUsuarioListUsuario = em.merge(oldIdTipoUsuarioOfUsuarioListUsuario);
                 }
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findTipoUsuario(tipoUsuario.getIdTipoUsuario()) != null) {
-                throw new PreexistingEntityException("TipoUsuario " + tipoUsuario + " already exists.", ex);
+            if (findTipousuario(tipousuario.getIdTipoUsuario()) != null) {
+                throw new PreexistingEntityException("Tipousuario " + tipousuario + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -69,42 +72,42 @@ public class TipoUsuarioJpaController implements Serializable {
         }
     }
 
-    public void edit(TipoUsuario tipoUsuario) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(TipoUsuario tipousuario) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TipoUsuario persistentTipoUsuario = em.find(TipoUsuario.class, tipoUsuario.getIdTipoUsuario());
-            Collection<Usuario> usuarioCollectionOld = persistentTipoUsuario.getUsuarioCollection();
-            Collection<Usuario> usuarioCollectionNew = tipoUsuario.getUsuarioCollection();
+            TipoUsuario persistentTipousuario = em.find(TipoUsuario.class, tipousuario.getIdTipoUsuario());
+            List<Usuario> usuarioListOld = persistentTipousuario.getUsuarioList();
+            List<Usuario> usuarioListNew = tipousuario.getUsuarioList();
             List<String> illegalOrphanMessages = null;
-            for (Usuario usuarioCollectionOldUsuario : usuarioCollectionOld) {
-                if (!usuarioCollectionNew.contains(usuarioCollectionOldUsuario)) {
+            for (Usuario usuarioListOldUsuario : usuarioListOld) {
+                if (!usuarioListNew.contains(usuarioListOldUsuario)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Usuario " + usuarioCollectionOldUsuario + " since its idTipoUsuario field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Usuario " + usuarioListOldUsuario + " since its idTipoUsuario field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            Collection<Usuario> attachedUsuarioCollectionNew = new ArrayList<Usuario>();
-            for (Usuario usuarioCollectionNewUsuarioToAttach : usuarioCollectionNew) {
-                usuarioCollectionNewUsuarioToAttach = em.getReference(usuarioCollectionNewUsuarioToAttach.getClass(), usuarioCollectionNewUsuarioToAttach.getIdUsuario());
-                attachedUsuarioCollectionNew.add(usuarioCollectionNewUsuarioToAttach);
+            List<Usuario> attachedUsuarioListNew = new ArrayList<Usuario>();
+            for (Usuario usuarioListNewUsuarioToAttach : usuarioListNew) {
+                usuarioListNewUsuarioToAttach = em.getReference(usuarioListNewUsuarioToAttach.getClass(), usuarioListNewUsuarioToAttach.getIdUsuario());
+                attachedUsuarioListNew.add(usuarioListNewUsuarioToAttach);
             }
-            usuarioCollectionNew = attachedUsuarioCollectionNew;
-            tipoUsuario.setUsuarioCollection(usuarioCollectionNew);
-            tipoUsuario = em.merge(tipoUsuario);
-            for (Usuario usuarioCollectionNewUsuario : usuarioCollectionNew) {
-                if (!usuarioCollectionOld.contains(usuarioCollectionNewUsuario)) {
-                    TipoUsuario oldIdTipoUsuarioOfUsuarioCollectionNewUsuario = usuarioCollectionNewUsuario.getIdTipoUsuario();
-                    usuarioCollectionNewUsuario.setIdTipoUsuario(tipoUsuario);
-                    usuarioCollectionNewUsuario = em.merge(usuarioCollectionNewUsuario);
-                    if (oldIdTipoUsuarioOfUsuarioCollectionNewUsuario != null && !oldIdTipoUsuarioOfUsuarioCollectionNewUsuario.equals(tipoUsuario)) {
-                        oldIdTipoUsuarioOfUsuarioCollectionNewUsuario.getUsuarioCollection().remove(usuarioCollectionNewUsuario);
-                        oldIdTipoUsuarioOfUsuarioCollectionNewUsuario = em.merge(oldIdTipoUsuarioOfUsuarioCollectionNewUsuario);
+            usuarioListNew = attachedUsuarioListNew;
+            tipousuario.setUsuarioList(usuarioListNew);
+            tipousuario = em.merge(tipousuario);
+            for (Usuario usuarioListNewUsuario : usuarioListNew) {
+                if (!usuarioListOld.contains(usuarioListNewUsuario)) {
+                    TipoUsuario oldIdTipoUsuarioOfUsuarioListNewUsuario = usuarioListNewUsuario.getIdTipoUsuario();
+                    usuarioListNewUsuario.setIdTipoUsuario(tipousuario);
+                    usuarioListNewUsuario = em.merge(usuarioListNewUsuario);
+                    if (oldIdTipoUsuarioOfUsuarioListNewUsuario != null && !oldIdTipoUsuarioOfUsuarioListNewUsuario.equals(tipousuario)) {
+                        oldIdTipoUsuarioOfUsuarioListNewUsuario.getUsuarioList().remove(usuarioListNewUsuario);
+                        oldIdTipoUsuarioOfUsuarioListNewUsuario = em.merge(oldIdTipoUsuarioOfUsuarioListNewUsuario);
                     }
                 }
             }
@@ -112,9 +115,9 @@ public class TipoUsuarioJpaController implements Serializable {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                String id = tipoUsuario.getIdTipoUsuario();
-                if (findTipoUsuario(id) == null) {
-                    throw new NonexistentEntityException("The tipoUsuario with id " + id + " no longer exists.");
+                String id = tipousuario.getIdTipoUsuario();
+                if (findTipousuario(id) == null) {
+                    throw new NonexistentEntityException("The tipousuario with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -130,25 +133,25 @@ public class TipoUsuarioJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TipoUsuario tipoUsuario;
+            TipoUsuario tipousuario;
             try {
-                tipoUsuario = em.getReference(TipoUsuario.class, id);
-                tipoUsuario.getIdTipoUsuario();
+                tipousuario = em.getReference(TipoUsuario.class, id);
+                tipousuario.getIdTipoUsuario();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tipoUsuario with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The tipousuario with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<Usuario> usuarioCollectionOrphanCheck = tipoUsuario.getUsuarioCollection();
-            for (Usuario usuarioCollectionOrphanCheckUsuario : usuarioCollectionOrphanCheck) {
+            List<Usuario> usuarioListOrphanCheck = tipousuario.getUsuarioList();
+            for (Usuario usuarioListOrphanCheckUsuario : usuarioListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This TipoUsuario (" + tipoUsuario + ") cannot be destroyed since the Usuario " + usuarioCollectionOrphanCheckUsuario + " in its usuarioCollection field has a non-nullable idTipoUsuario field.");
+                illegalOrphanMessages.add("This Tipousuario (" + tipousuario + ") cannot be destroyed since the Usuario " + usuarioListOrphanCheckUsuario + " in its usuarioList field has a non-nullable idTipoUsuario field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            em.remove(tipoUsuario);
+            em.remove(tipousuario);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -157,15 +160,15 @@ public class TipoUsuarioJpaController implements Serializable {
         }
     }
 
-    public List<TipoUsuario> findTipoUsuarioEntities() {
-        return findTipoUsuarioEntities(true, -1, -1);
+    public List<TipoUsuario> findTipousuarioEntities() {
+        return findTipousuarioEntities(true, -1, -1);
     }
 
-    public List<TipoUsuario> findTipoUsuarioEntities(int maxResults, int firstResult) {
-        return findTipoUsuarioEntities(false, maxResults, firstResult);
+    public List<TipoUsuario> findTipousuarioEntities(int maxResults, int firstResult) {
+        return findTipousuarioEntities(false, maxResults, firstResult);
     }
 
-    private List<TipoUsuario> findTipoUsuarioEntities(boolean all, int maxResults, int firstResult) {
+    private List<TipoUsuario> findTipousuarioEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
@@ -181,7 +184,7 @@ public class TipoUsuarioJpaController implements Serializable {
         }
     }
 
-    public TipoUsuario findTipoUsuario(String id) {
+    public TipoUsuario findTipousuario(String id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(TipoUsuario.class, id);
@@ -190,7 +193,7 @@ public class TipoUsuarioJpaController implements Serializable {
         }
     }
 
-    public int getTipoUsuarioCount() {
+    public int getTipousuarioCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
@@ -202,5 +205,5 @@ public class TipoUsuarioJpaController implements Serializable {
             em.close();
         }
     }
-
+    
 }

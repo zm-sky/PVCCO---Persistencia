@@ -1,4 +1,8 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package controladores;
 
 import controladores.exceptions.IllegalOrphanException;
@@ -12,7 +16,6 @@ import javax.persistence.criteria.Root;
 import objetosNegocio.Usuario;
 import objetosNegocio.MovimientoEnVenta;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -21,7 +24,7 @@ import objetosNegocio.VentaTalla;
 
 /**
  *
- * @author Raul Karim Sabag Ballesteros
+ * @author zippy
  */
 public class VentaJpaController implements Serializable {
 
@@ -35,11 +38,11 @@ public class VentaJpaController implements Serializable {
     }
 
     public void create(Venta venta) throws PreexistingEntityException, Exception {
-        if (venta.getMovimientoEnVentaCollection() == null) {
-            venta.setMovimientoEnVentaCollection(new ArrayList<MovimientoEnVenta>());
+        if (venta.getMovimientoenventaList() == null) {
+            venta.setMovimientoenventaList(new ArrayList<MovimientoEnVenta>());
         }
-        if (venta.getVentaTallaCollection() == null) {
-            venta.setVentaTallaCollection(new ArrayList<VentaTalla>());
+        if (venta.getVentatallaList() == null) {
+            venta.setVentatallaList(new ArrayList<VentaTalla>());
         }
         EntityManager em = null;
         try {
@@ -50,39 +53,39 @@ public class VentaJpaController implements Serializable {
                 idUsuario = em.getReference(idUsuario.getClass(), idUsuario.getIdUsuario());
                 venta.setIdUsuario(idUsuario);
             }
-            Collection<MovimientoEnVenta> attachedMovimientoEnVentaCollection = new ArrayList<MovimientoEnVenta>();
-            for (MovimientoEnVenta movimientoEnVentaCollectionMovimientoEnVentaToAttach : venta.getMovimientoEnVentaCollection()) {
-                movimientoEnVentaCollectionMovimientoEnVentaToAttach = em.getReference(movimientoEnVentaCollectionMovimientoEnVentaToAttach.getClass(), movimientoEnVentaCollectionMovimientoEnVentaToAttach.getIdMovimientoVenta());
-                attachedMovimientoEnVentaCollection.add(movimientoEnVentaCollectionMovimientoEnVentaToAttach);
+            List<MovimientoEnVenta> attachedMovimientoenventaList = new ArrayList<MovimientoEnVenta>();
+            for (MovimientoEnVenta movimientoenventaListMovimientoenventaToAttach : venta.getMovimientoenventaList()) {
+                movimientoenventaListMovimientoenventaToAttach = em.getReference(movimientoenventaListMovimientoenventaToAttach.getClass(), movimientoenventaListMovimientoenventaToAttach.getIdMovimientoVenta());
+                attachedMovimientoenventaList.add(movimientoenventaListMovimientoenventaToAttach);
             }
-            venta.setMovimientoEnVentaCollection(attachedMovimientoEnVentaCollection);
-            Collection<VentaTalla> attachedVentaTallaCollection = new ArrayList<VentaTalla>();
-            for (VentaTalla ventaTallaCollectionVentaTallaToAttach : venta.getVentaTallaCollection()) {
-                ventaTallaCollectionVentaTallaToAttach = em.getReference(ventaTallaCollectionVentaTallaToAttach.getClass(), ventaTallaCollectionVentaTallaToAttach.getIdVentaTalla());
-                attachedVentaTallaCollection.add(ventaTallaCollectionVentaTallaToAttach);
+            venta.setMovimientoenventaList(attachedMovimientoenventaList);
+            List<VentaTalla> attachedVentatallaList = new ArrayList<VentaTalla>();
+            for (VentaTalla ventatallaListVentatallaToAttach : venta.getVentatallaList()) {
+                ventatallaListVentatallaToAttach = em.getReference(ventatallaListVentatallaToAttach.getClass(), ventatallaListVentatallaToAttach.getIdVentaTalla());
+                attachedVentatallaList.add(ventatallaListVentatallaToAttach);
             }
-            venta.setVentaTallaCollection(attachedVentaTallaCollection);
+            venta.setVentatallaList(attachedVentatallaList);
             em.persist(venta);
             if (idUsuario != null) {
-                idUsuario.getVentaCollection().add(venta);
+                idUsuario.getVentaList().add(venta);
                 idUsuario = em.merge(idUsuario);
             }
-            for (MovimientoEnVenta movimientoEnVentaCollectionMovimientoEnVenta : venta.getMovimientoEnVentaCollection()) {
-                Venta oldIdVentaOfMovimientoEnVentaCollectionMovimientoEnVenta = movimientoEnVentaCollectionMovimientoEnVenta.getIdVenta();
-                movimientoEnVentaCollectionMovimientoEnVenta.setIdVenta(venta);
-                movimientoEnVentaCollectionMovimientoEnVenta = em.merge(movimientoEnVentaCollectionMovimientoEnVenta);
-                if (oldIdVentaOfMovimientoEnVentaCollectionMovimientoEnVenta != null) {
-                    oldIdVentaOfMovimientoEnVentaCollectionMovimientoEnVenta.getMovimientoEnVentaCollection().remove(movimientoEnVentaCollectionMovimientoEnVenta);
-                    oldIdVentaOfMovimientoEnVentaCollectionMovimientoEnVenta = em.merge(oldIdVentaOfMovimientoEnVentaCollectionMovimientoEnVenta);
+            for (MovimientoEnVenta movimientoenventaListMovimientoenventa : venta.getMovimientoenventaList()) {
+                Venta oldIdVentaOfMovimientoenventaListMovimientoenventa = movimientoenventaListMovimientoenventa.getIdVenta();
+                movimientoenventaListMovimientoenventa.setIdVenta(venta);
+                movimientoenventaListMovimientoenventa = em.merge(movimientoenventaListMovimientoenventa);
+                if (oldIdVentaOfMovimientoenventaListMovimientoenventa != null) {
+                    oldIdVentaOfMovimientoenventaListMovimientoenventa.getMovimientoenventaList().remove(movimientoenventaListMovimientoenventa);
+                    oldIdVentaOfMovimientoenventaListMovimientoenventa = em.merge(oldIdVentaOfMovimientoenventaListMovimientoenventa);
                 }
             }
-            for (VentaTalla ventaTallaCollectionVentaTalla : venta.getVentaTallaCollection()) {
-                Venta oldIdVentaOfVentaTallaCollectionVentaTalla = ventaTallaCollectionVentaTalla.getIdVenta();
-                ventaTallaCollectionVentaTalla.setIdVenta(venta);
-                ventaTallaCollectionVentaTalla = em.merge(ventaTallaCollectionVentaTalla);
-                if (oldIdVentaOfVentaTallaCollectionVentaTalla != null) {
-                    oldIdVentaOfVentaTallaCollectionVentaTalla.getVentaTallaCollection().remove(ventaTallaCollectionVentaTalla);
-                    oldIdVentaOfVentaTallaCollectionVentaTalla = em.merge(oldIdVentaOfVentaTallaCollectionVentaTalla);
+            for (VentaTalla ventatallaListVentatalla : venta.getVentatallaList()) {
+                Venta oldIdVentaOfVentatallaListVentatalla = ventatallaListVentatalla.getIdVenta();
+                ventatallaListVentatalla.setIdVenta(venta);
+                ventatallaListVentatalla = em.merge(ventatallaListVentatalla);
+                if (oldIdVentaOfVentatallaListVentatalla != null) {
+                    oldIdVentaOfVentatallaListVentatalla.getVentatallaList().remove(ventatallaListVentatalla);
+                    oldIdVentaOfVentatallaListVentatalla = em.merge(oldIdVentaOfVentatallaListVentatalla);
                 }
             }
             em.getTransaction().commit();
@@ -106,25 +109,25 @@ public class VentaJpaController implements Serializable {
             Venta persistentVenta = em.find(Venta.class, venta.getIdVenta());
             Usuario idUsuarioOld = persistentVenta.getIdUsuario();
             Usuario idUsuarioNew = venta.getIdUsuario();
-            Collection<MovimientoEnVenta> movimientoEnVentaCollectionOld = persistentVenta.getMovimientoEnVentaCollection();
-            Collection<MovimientoEnVenta> movimientoEnVentaCollectionNew = venta.getMovimientoEnVentaCollection();
-            Collection<VentaTalla> ventaTallaCollectionOld = persistentVenta.getVentaTallaCollection();
-            Collection<VentaTalla> ventaTallaCollectionNew = venta.getVentaTallaCollection();
+            List<MovimientoEnVenta> movimientoenventaListOld = persistentVenta.getMovimientoenventaList();
+            List<MovimientoEnVenta> movimientoenventaListNew = venta.getMovimientoenventaList();
+            List<VentaTalla> ventatallaListOld = persistentVenta.getVentatallaList();
+            List<VentaTalla> ventatallaListNew = venta.getVentatallaList();
             List<String> illegalOrphanMessages = null;
-            for (MovimientoEnVenta movimientoEnVentaCollectionOldMovimientoEnVenta : movimientoEnVentaCollectionOld) {
-                if (!movimientoEnVentaCollectionNew.contains(movimientoEnVentaCollectionOldMovimientoEnVenta)) {
+            for (MovimientoEnVenta movimientoenventaListOldMovimientoenventa : movimientoenventaListOld) {
+                if (!movimientoenventaListNew.contains(movimientoenventaListOldMovimientoenventa)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain MovimientoEnVenta " + movimientoEnVentaCollectionOldMovimientoEnVenta + " since its idVenta field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Movimientoenventa " + movimientoenventaListOldMovimientoenventa + " since its idVenta field is not nullable.");
                 }
             }
-            for (VentaTalla ventaTallaCollectionOldVentaTalla : ventaTallaCollectionOld) {
-                if (!ventaTallaCollectionNew.contains(ventaTallaCollectionOldVentaTalla)) {
+            for (VentaTalla ventatallaListOldVentatalla : ventatallaListOld) {
+                if (!ventatallaListNew.contains(ventatallaListOldVentatalla)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain VentaTalla " + ventaTallaCollectionOldVentaTalla + " since its idVenta field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Ventatalla " + ventatallaListOldVentatalla + " since its idVenta field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -134,48 +137,48 @@ public class VentaJpaController implements Serializable {
                 idUsuarioNew = em.getReference(idUsuarioNew.getClass(), idUsuarioNew.getIdUsuario());
                 venta.setIdUsuario(idUsuarioNew);
             }
-            Collection<MovimientoEnVenta> attachedMovimientoEnVentaCollectionNew = new ArrayList<MovimientoEnVenta>();
-            for (MovimientoEnVenta movimientoEnVentaCollectionNewMovimientoEnVentaToAttach : movimientoEnVentaCollectionNew) {
-                movimientoEnVentaCollectionNewMovimientoEnVentaToAttach = em.getReference(movimientoEnVentaCollectionNewMovimientoEnVentaToAttach.getClass(), movimientoEnVentaCollectionNewMovimientoEnVentaToAttach.getIdMovimientoVenta());
-                attachedMovimientoEnVentaCollectionNew.add(movimientoEnVentaCollectionNewMovimientoEnVentaToAttach);
+            List<MovimientoEnVenta> attachedMovimientoenventaListNew = new ArrayList<MovimientoEnVenta>();
+            for (MovimientoEnVenta movimientoenventaListNewMovimientoenventaToAttach : movimientoenventaListNew) {
+                movimientoenventaListNewMovimientoenventaToAttach = em.getReference(movimientoenventaListNewMovimientoenventaToAttach.getClass(), movimientoenventaListNewMovimientoenventaToAttach.getIdMovimientoVenta());
+                attachedMovimientoenventaListNew.add(movimientoenventaListNewMovimientoenventaToAttach);
             }
-            movimientoEnVentaCollectionNew = attachedMovimientoEnVentaCollectionNew;
-            venta.setMovimientoEnVentaCollection(movimientoEnVentaCollectionNew);
-            Collection<VentaTalla> attachedVentaTallaCollectionNew = new ArrayList<VentaTalla>();
-            for (VentaTalla ventaTallaCollectionNewVentaTallaToAttach : ventaTallaCollectionNew) {
-                ventaTallaCollectionNewVentaTallaToAttach = em.getReference(ventaTallaCollectionNewVentaTallaToAttach.getClass(), ventaTallaCollectionNewVentaTallaToAttach.getIdVentaTalla());
-                attachedVentaTallaCollectionNew.add(ventaTallaCollectionNewVentaTallaToAttach);
+            movimientoenventaListNew = attachedMovimientoenventaListNew;
+            venta.setMovimientoenventaList(movimientoenventaListNew);
+            List<VentaTalla> attachedVentatallaListNew = new ArrayList<VentaTalla>();
+            for (VentaTalla ventatallaListNewVentatallaToAttach : ventatallaListNew) {
+                ventatallaListNewVentatallaToAttach = em.getReference(ventatallaListNewVentatallaToAttach.getClass(), ventatallaListNewVentatallaToAttach.getIdVentaTalla());
+                attachedVentatallaListNew.add(ventatallaListNewVentatallaToAttach);
             }
-            ventaTallaCollectionNew = attachedVentaTallaCollectionNew;
-            venta.setVentaTallaCollection(ventaTallaCollectionNew);
+            ventatallaListNew = attachedVentatallaListNew;
+            venta.setVentatallaList(ventatallaListNew);
             venta = em.merge(venta);
             if (idUsuarioOld != null && !idUsuarioOld.equals(idUsuarioNew)) {
-                idUsuarioOld.getVentaCollection().remove(venta);
+                idUsuarioOld.getVentaList().remove(venta);
                 idUsuarioOld = em.merge(idUsuarioOld);
             }
             if (idUsuarioNew != null && !idUsuarioNew.equals(idUsuarioOld)) {
-                idUsuarioNew.getVentaCollection().add(venta);
+                idUsuarioNew.getVentaList().add(venta);
                 idUsuarioNew = em.merge(idUsuarioNew);
             }
-            for (MovimientoEnVenta movimientoEnVentaCollectionNewMovimientoEnVenta : movimientoEnVentaCollectionNew) {
-                if (!movimientoEnVentaCollectionOld.contains(movimientoEnVentaCollectionNewMovimientoEnVenta)) {
-                    Venta oldIdVentaOfMovimientoEnVentaCollectionNewMovimientoEnVenta = movimientoEnVentaCollectionNewMovimientoEnVenta.getIdVenta();
-                    movimientoEnVentaCollectionNewMovimientoEnVenta.setIdVenta(venta);
-                    movimientoEnVentaCollectionNewMovimientoEnVenta = em.merge(movimientoEnVentaCollectionNewMovimientoEnVenta);
-                    if (oldIdVentaOfMovimientoEnVentaCollectionNewMovimientoEnVenta != null && !oldIdVentaOfMovimientoEnVentaCollectionNewMovimientoEnVenta.equals(venta)) {
-                        oldIdVentaOfMovimientoEnVentaCollectionNewMovimientoEnVenta.getMovimientoEnVentaCollection().remove(movimientoEnVentaCollectionNewMovimientoEnVenta);
-                        oldIdVentaOfMovimientoEnVentaCollectionNewMovimientoEnVenta = em.merge(oldIdVentaOfMovimientoEnVentaCollectionNewMovimientoEnVenta);
+            for (MovimientoEnVenta movimientoenventaListNewMovimientoenventa : movimientoenventaListNew) {
+                if (!movimientoenventaListOld.contains(movimientoenventaListNewMovimientoenventa)) {
+                    Venta oldIdVentaOfMovimientoenventaListNewMovimientoenventa = movimientoenventaListNewMovimientoenventa.getIdVenta();
+                    movimientoenventaListNewMovimientoenventa.setIdVenta(venta);
+                    movimientoenventaListNewMovimientoenventa = em.merge(movimientoenventaListNewMovimientoenventa);
+                    if (oldIdVentaOfMovimientoenventaListNewMovimientoenventa != null && !oldIdVentaOfMovimientoenventaListNewMovimientoenventa.equals(venta)) {
+                        oldIdVentaOfMovimientoenventaListNewMovimientoenventa.getMovimientoenventaList().remove(movimientoenventaListNewMovimientoenventa);
+                        oldIdVentaOfMovimientoenventaListNewMovimientoenventa = em.merge(oldIdVentaOfMovimientoenventaListNewMovimientoenventa);
                     }
                 }
             }
-            for (VentaTalla ventaTallaCollectionNewVentaTalla : ventaTallaCollectionNew) {
-                if (!ventaTallaCollectionOld.contains(ventaTallaCollectionNewVentaTalla)) {
-                    Venta oldIdVentaOfVentaTallaCollectionNewVentaTalla = ventaTallaCollectionNewVentaTalla.getIdVenta();
-                    ventaTallaCollectionNewVentaTalla.setIdVenta(venta);
-                    ventaTallaCollectionNewVentaTalla = em.merge(ventaTallaCollectionNewVentaTalla);
-                    if (oldIdVentaOfVentaTallaCollectionNewVentaTalla != null && !oldIdVentaOfVentaTallaCollectionNewVentaTalla.equals(venta)) {
-                        oldIdVentaOfVentaTallaCollectionNewVentaTalla.getVentaTallaCollection().remove(ventaTallaCollectionNewVentaTalla);
-                        oldIdVentaOfVentaTallaCollectionNewVentaTalla = em.merge(oldIdVentaOfVentaTallaCollectionNewVentaTalla);
+            for (VentaTalla ventatallaListNewVentatalla : ventatallaListNew) {
+                if (!ventatallaListOld.contains(ventatallaListNewVentatalla)) {
+                    Venta oldIdVentaOfVentatallaListNewVentatalla = ventatallaListNewVentatalla.getIdVenta();
+                    ventatallaListNewVentatalla.setIdVenta(venta);
+                    ventatallaListNewVentatalla = em.merge(ventatallaListNewVentatalla);
+                    if (oldIdVentaOfVentatallaListNewVentatalla != null && !oldIdVentaOfVentatallaListNewVentatalla.equals(venta)) {
+                        oldIdVentaOfVentatallaListNewVentatalla.getVentatallaList().remove(ventatallaListNewVentatalla);
+                        oldIdVentaOfVentatallaListNewVentatalla = em.merge(oldIdVentaOfVentatallaListNewVentatalla);
                     }
                 }
             }
@@ -209,26 +212,26 @@ public class VentaJpaController implements Serializable {
                 throw new NonexistentEntityException("The venta with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<MovimientoEnVenta> movimientoEnVentaCollectionOrphanCheck = venta.getMovimientoEnVentaCollection();
-            for (MovimientoEnVenta movimientoEnVentaCollectionOrphanCheckMovimientoEnVenta : movimientoEnVentaCollectionOrphanCheck) {
+            List<MovimientoEnVenta> movimientoenventaListOrphanCheck = venta.getMovimientoenventaList();
+            for (MovimientoEnVenta movimientoenventaListOrphanCheckMovimientoenventa : movimientoenventaListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Venta (" + venta + ") cannot be destroyed since the MovimientoEnVenta " + movimientoEnVentaCollectionOrphanCheckMovimientoEnVenta + " in its movimientoEnVentaCollection field has a non-nullable idVenta field.");
+                illegalOrphanMessages.add("This Venta (" + venta + ") cannot be destroyed since the Movimientoenventa " + movimientoenventaListOrphanCheckMovimientoenventa + " in its movimientoenventaList field has a non-nullable idVenta field.");
             }
-            Collection<VentaTalla> ventaTallaCollectionOrphanCheck = venta.getVentaTallaCollection();
-            for (VentaTalla ventaTallaCollectionOrphanCheckVentaTalla : ventaTallaCollectionOrphanCheck) {
+            List<VentaTalla> ventatallaListOrphanCheck = venta.getVentatallaList();
+            for (VentaTalla ventatallaListOrphanCheckVentatalla : ventatallaListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Venta (" + venta + ") cannot be destroyed since the VentaTalla " + ventaTallaCollectionOrphanCheckVentaTalla + " in its ventaTallaCollection field has a non-nullable idVenta field.");
+                illegalOrphanMessages.add("This Venta (" + venta + ") cannot be destroyed since the Ventatalla " + ventatallaListOrphanCheckVentatalla + " in its ventatallaList field has a non-nullable idVenta field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
             Usuario idUsuario = venta.getIdUsuario();
             if (idUsuario != null) {
-                idUsuario.getVentaCollection().remove(venta);
+                idUsuario.getVentaList().remove(venta);
                 idUsuario = em.merge(idUsuario);
             }
             em.remove(venta);
@@ -285,5 +288,5 @@ public class VentaJpaController implements Serializable {
             em.close();
         }
     }
-
+    
 }

@@ -1,4 +1,8 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package controladores;
 
 import controladores.exceptions.NonexistentEntityException;
@@ -17,7 +21,7 @@ import objetosNegocio.VentaTalla;
 
 /**
  *
- * @author Raul Karim Sabag Ballesteros
+ * @author zippy
  */
 public class VentaTallaJpaController implements Serializable {
 
@@ -30,34 +34,34 @@ public class VentaTallaJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(VentaTalla ventaTalla) throws PreexistingEntityException, Exception {
+    public void create(VentaTalla ventatalla) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Talla idTalla = ventaTalla.getIdTalla();
+            Talla idTalla = ventatalla.getIdTalla();
             if (idTalla != null) {
                 idTalla = em.getReference(idTalla.getClass(), idTalla.getIdTalla());
-                ventaTalla.setIdTalla(idTalla);
+                ventatalla.setIdTalla(idTalla);
             }
-            Venta idVenta = ventaTalla.getIdVenta();
+            Venta idVenta = ventatalla.getIdVenta();
             if (idVenta != null) {
                 idVenta = em.getReference(idVenta.getClass(), idVenta.getIdVenta());
-                ventaTalla.setIdVenta(idVenta);
+                ventatalla.setIdVenta(idVenta);
             }
-            em.persist(ventaTalla);
+            em.persist(ventatalla);
             if (idTalla != null) {
-                idTalla.getVentaTallaCollection().add(ventaTalla);
+                idTalla.getVentatallaList().add(ventatalla);
                 idTalla = em.merge(idTalla);
             }
             if (idVenta != null) {
-                idVenta.getVentaTallaCollection().add(ventaTalla);
+                idVenta.getVentatallaList().add(ventatalla);
                 idVenta = em.merge(idVenta);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findVentaTalla(ventaTalla.getIdVentaTalla()) != null) {
-                throw new PreexistingEntityException("VentaTalla " + ventaTalla + " already exists.", ex);
+            if (findVentatalla(ventatalla.getIdVentaTalla()) != null) {
+                throw new PreexistingEntityException("Ventatalla " + ventatalla + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -67,48 +71,48 @@ public class VentaTallaJpaController implements Serializable {
         }
     }
 
-    public void edit(VentaTalla ventaTalla) throws NonexistentEntityException, Exception {
+    public void edit(VentaTalla ventatalla) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            VentaTalla persistentVentaTalla = em.find(VentaTalla.class, ventaTalla.getIdVentaTalla());
-            Talla idTallaOld = persistentVentaTalla.getIdTalla();
-            Talla idTallaNew = ventaTalla.getIdTalla();
-            Venta idVentaOld = persistentVentaTalla.getIdVenta();
-            Venta idVentaNew = ventaTalla.getIdVenta();
+            VentaTalla persistentVentatalla = em.find(VentaTalla.class, ventatalla.getIdVentaTalla());
+            Talla idTallaOld = persistentVentatalla.getIdTalla();
+            Talla idTallaNew = ventatalla.getIdTalla();
+            Venta idVentaOld = persistentVentatalla.getIdVenta();
+            Venta idVentaNew = ventatalla.getIdVenta();
             if (idTallaNew != null) {
                 idTallaNew = em.getReference(idTallaNew.getClass(), idTallaNew.getIdTalla());
-                ventaTalla.setIdTalla(idTallaNew);
+                ventatalla.setIdTalla(idTallaNew);
             }
             if (idVentaNew != null) {
                 idVentaNew = em.getReference(idVentaNew.getClass(), idVentaNew.getIdVenta());
-                ventaTalla.setIdVenta(idVentaNew);
+                ventatalla.setIdVenta(idVentaNew);
             }
-            ventaTalla = em.merge(ventaTalla);
+            ventatalla = em.merge(ventatalla);
             if (idTallaOld != null && !idTallaOld.equals(idTallaNew)) {
-                idTallaOld.getVentaTallaCollection().remove(ventaTalla);
+                idTallaOld.getVentatallaList().remove(ventatalla);
                 idTallaOld = em.merge(idTallaOld);
             }
             if (idTallaNew != null && !idTallaNew.equals(idTallaOld)) {
-                idTallaNew.getVentaTallaCollection().add(ventaTalla);
+                idTallaNew.getVentatallaList().add(ventatalla);
                 idTallaNew = em.merge(idTallaNew);
             }
             if (idVentaOld != null && !idVentaOld.equals(idVentaNew)) {
-                idVentaOld.getVentaTallaCollection().remove(ventaTalla);
+                idVentaOld.getVentatallaList().remove(ventatalla);
                 idVentaOld = em.merge(idVentaOld);
             }
             if (idVentaNew != null && !idVentaNew.equals(idVentaOld)) {
-                idVentaNew.getVentaTallaCollection().add(ventaTalla);
+                idVentaNew.getVentatallaList().add(ventatalla);
                 idVentaNew = em.merge(idVentaNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                String id = ventaTalla.getIdVentaTalla();
-                if (findVentaTalla(id) == null) {
-                    throw new NonexistentEntityException("The ventaTalla with id " + id + " no longer exists.");
+                String id = ventatalla.getIdVentaTalla();
+                if (findVentatalla(id) == null) {
+                    throw new NonexistentEntityException("The ventatalla with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -124,24 +128,24 @@ public class VentaTallaJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            VentaTalla ventaTalla;
+            VentaTalla ventatalla;
             try {
-                ventaTalla = em.getReference(VentaTalla.class, id);
-                ventaTalla.getIdVentaTalla();
+                ventatalla = em.getReference(VentaTalla.class, id);
+                ventatalla.getIdVentaTalla();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The ventaTalla with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The ventatalla with id " + id + " no longer exists.", enfe);
             }
-            Talla idTalla = ventaTalla.getIdTalla();
+            Talla idTalla = ventatalla.getIdTalla();
             if (idTalla != null) {
-                idTalla.getVentaTallaCollection().remove(ventaTalla);
+                idTalla.getVentatallaList().remove(ventatalla);
                 idTalla = em.merge(idTalla);
             }
-            Venta idVenta = ventaTalla.getIdVenta();
+            Venta idVenta = ventatalla.getIdVenta();
             if (idVenta != null) {
-                idVenta.getVentaTallaCollection().remove(ventaTalla);
+                idVenta.getVentatallaList().remove(ventatalla);
                 idVenta = em.merge(idVenta);
             }
-            em.remove(ventaTalla);
+            em.remove(ventatalla);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -150,15 +154,15 @@ public class VentaTallaJpaController implements Serializable {
         }
     }
 
-    public List<VentaTalla> findVentaTallaEntities() {
-        return findVentaTallaEntities(true, -1, -1);
+    public List<VentaTalla> findVentatallaEntities() {
+        return findVentatallaEntities(true, -1, -1);
     }
 
-    public List<VentaTalla> findVentaTallaEntities(int maxResults, int firstResult) {
-        return findVentaTallaEntities(false, maxResults, firstResult);
+    public List<VentaTalla> findVentatallaEntities(int maxResults, int firstResult) {
+        return findVentatallaEntities(false, maxResults, firstResult);
     }
 
-    private List<VentaTalla> findVentaTallaEntities(boolean all, int maxResults, int firstResult) {
+    private List<VentaTalla> findVentatallaEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
@@ -174,7 +178,7 @@ public class VentaTallaJpaController implements Serializable {
         }
     }
 
-    public VentaTalla findVentaTalla(String id) {
+    public VentaTalla findVentatalla(String id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(VentaTalla.class, id);
@@ -183,7 +187,7 @@ public class VentaTallaJpaController implements Serializable {
         }
     }
 
-    public int getVentaTallaCount() {
+    public int getVentatallaCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
@@ -195,5 +199,5 @@ public class VentaTallaJpaController implements Serializable {
             em.close();
         }
     }
-
+    
 }
